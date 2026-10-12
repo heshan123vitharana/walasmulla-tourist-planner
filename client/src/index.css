@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-surface text-slate-100 font-sans min-h-screen;
+    background-image: radial-gradient(ellipse at top, #0f766e22 0%, transparent 60%);
+  }
+
+  h1 { @apply text-3xl font-bold tracking-tight; }
+  h2 { @apply text-2xl font-semibold; }
+  h3 { @apply text-xl font-medium; }
+
+  a { @apply text-primary-400 hover:text-primary-300 transition-colors; }
+
+  /* Focus ring – accessible */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-400 ring-offset-2 ring-offset-surface;
+  }
+}
+
+/* ─── Components ──────────────────────────────────────────────── */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium
+           transition-all duration-200 focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 hover:bg-primary-500 text-white shadow-glow;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface-card border border-surface-border hover:border-primary-500
+           text-slate-200 hover:text-primary-300;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-700 hover:bg-red-600 text-white;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-white/10 text-slate-300 hover:text-white;
+  }
+
+  .card {
+    @apply bg-surface-card border border-surface-border rounded-2xl shadow-card
+           transition-all duration-300 hover:border-primary-700 hover:shadow-glow;
+  }
+
+  .input {
+    @apply w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-slate-100
+           placeholder-surface-muted transition-all duration-200
+           focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-slate-300 mb-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-900 text-primary-300 border border-primary-700;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-900/50 text-amber-300 border border-amber-700/50;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
+           border transition-all duration-200 cursor-pointer select-none;
+  }
+
+  .chip-inactive {
+    @apply chip border-surface-border bg-surface-card text-slate-400
+           hover:border-primary-600 hover:text-primary-300;
+  }
+
+  .chip-active {
+    @apply chip border-primary-500 bg-primary-900/60 text-primary-300;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-slate-200 mb-4;
+  }
+
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  .form-error {
+    @apply text-red-400 text-xs mt-1;
+  }
+
+  /* Leaflet override – ensure map renders above page elements */
+  .leaflet-container {
+    @apply rounded-xl z-0;
+    font-family: inherit;
+  }
+}
+
+/* ─── Utilities ───────────────────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-300 to-primary-500 bg-clip-text text-transparent;
+  }
+
+  .glassmorphism {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.surface.border') transparent;
+  }
+}
