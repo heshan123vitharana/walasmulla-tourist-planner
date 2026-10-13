@@ -9,9 +9,9 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="relative mt-24 border-t border-surface-border/60 bg-surface-card/60 backdrop-blur-xl">
+    <footer className="relative mt-24 border-t border-white/10 bg-[#040507] backdrop-blur-2xl">
       {/* Top subtle gradient glow bar */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary-500/50 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -125,6 +125,28 @@ export default function Footer() {
               Made with <Heart size={12} className="text-rose-500 fill-rose-500" />
             </span>
           </div>
+        </div>
+
+        {/* Giant Watermark Typography matching Reference UI - 100% Vector Responsive */}
+        <div className="mt-8 -mb-6 w-full select-none pointer-events-none flex justify-center">
+          <svg
+            viewBox="0 0 1200 180"
+            className="w-full max-w-5xl h-auto max-h-28 sm:max-h-36 opacity-75"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <text
+              x="50%"
+              y="55%"
+              dominantBaseline="middle"
+              textAnchor="middle"
+              className="fill-white/[0.05] font-black tracking-wider"
+              fontSize="165"
+              fontFamily="inherit"
+              fontWeight="900"
+            >
+              WALASMULLA
+            </text>
+          </svg>
         </div>
       </div>
     </footer>

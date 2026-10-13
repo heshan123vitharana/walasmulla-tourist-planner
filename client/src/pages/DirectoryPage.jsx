@@ -46,21 +46,28 @@ export default function DirectoryPage() {
 
   return (
     <div className="page-container">
-      <div className="mb-8">
-        <h1 className="text-gradient mb-1">Explore Places</h1>
-        <p className="text-slate-400">Discover tourist spots within 25 km of Walasmulla.</p>
+      <div className="mb-8 space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-950/80 border border-primary-800/40 text-primary-300 text-xs font-semibold">
+          <span>📍 25 km Radius from Walasmulla Clock Tower</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight">
+          Explore <span className="text-gradient">Places</span>
+        </h1>
+        <p className="text-slate-400 text-sm sm:text-base">
+          Browse verified heritage cave temples, sandy beaches, wildlife reserves and waterfalls.
+        </p>
       </div>
 
-      {/* Search */}
+      {/* Search Bar */}
       <div className="relative mb-4 max-w-md">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary-400" />
         <input
           id="place-search"
           type="search"
-          placeholder="Search places…"
+          placeholder="Search by name, cave, beach, sanctuary..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="input pl-9"
+          className="input pl-10 pr-4 py-2.5 bg-surface-card/80 border-surface-border/80 focus:border-primary-500 rounded-xl"
         />
       </div>
 

@@ -26,9 +26,9 @@ export default {
           600: '#d97706',
         },
         surface: {
-          DEFAULT: '#0f172a',
-          card:    '#1e293b',
-          border:  '#334155',
+          DEFAULT: '#05070a', // deep pitch black
+          card:    '#0c0f16', // obsidian black card
+          border:  '#1b2130', // subtle clean dark border
           muted:   '#64748b',
         },
       },

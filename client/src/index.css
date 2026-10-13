@@ -12,8 +12,8 @@
   }
 
   body {
-    @apply bg-surface text-slate-100 font-sans min-h-screen;
-    background-image: radial-gradient(ellipse at top, #0f766e22 0%, transparent 60%);
+    @apply bg-[#050608] text-slate-100 font-sans min-h-screen;
+    background-image: radial-gradient(circle at 50% 0%, #0c0e14 0%, #050608 70%);
   }
 
   h1 { @apply text-3xl font-bold tracking-tight; }
@@ -132,5 +132,22 @@
   /* Seamless Dark Mode for OpenStreetMap tiles without any API Key watermark */
   .leaflet-dark-tiles {
     filter: brightness(0.7) invert(1) contrast(2.2) hue-rotate(195deg) saturate(0.4) !important;
+  }
+
+  /* Bento Glow Cards */
+  .bento-card {
+    @apply relative overflow-hidden rounded-3xl bg-[#0a0c10]/90 border border-white/[0.08]
+           backdrop-blur-xl shadow-2xl transition-all duration-300 hover:border-teal-500/40
+           hover:shadow-[0_0_35px_rgba(20,184,166,0.12)];
+  }
+
+  .glow-bloom {
+    @apply absolute rounded-full blur-3xl pointer-events-none opacity-25 mix-blend-screen;
+  }
+
+  /* Giant Watermark Typography matching reference UI */
+  .watermark-text {
+    @apply font-black text-white/[0.035] select-none pointer-events-none tracking-widest
+           text-[15vw] sm:text-[14vw] leading-none uppercase text-center font-sans overflow-hidden;
   }
 }

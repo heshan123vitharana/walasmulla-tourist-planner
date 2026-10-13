@@ -18,10 +18,10 @@ export default function PlaceCard({ place }) {
   return (
     <Link
       to={`/places/${place.slug}`}
-      className="card group flex flex-col overflow-hidden no-underline"
+      className="group relative flex flex-col overflow-hidden rounded-2xl bg-surface-card/80 border border-surface-border/80 hover:border-primary-500/50 hover:shadow-[0_0_25px_rgba(20,184,166,0.15)] transition-all duration-300 no-underline backdrop-blur-md"
     >
-      {/* Image */}
-      <div className="relative h-44 overflow-hidden bg-surface">
+      {/* Image with subtle bottom gradient */}
+      <div className="relative h-48 overflow-hidden bg-surface">
         {place.imageUrl ? (
           <img
             src={place.imageUrl}
@@ -37,13 +37,16 @@ export default function PlaceCard({ place }) {
             <MapPin size={40} className="text-primary-600/60" />
           </div>
         )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+
         {/* Add to plan button */}
         <button
           onClick={toggle}
           className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
             inPlan
-              ? 'bg-primary-500 text-white scale-110'
-              : 'bg-black/50 text-white hover:bg-primary-600'
+              ? 'bg-primary-500 text-white scale-110 shadow-glow'
+              : 'bg-black/60 backdrop-blur-md text-white hover:bg-primary-600 border border-white/20'
           }`}
           title={inPlan ? 'Remove from plan' : 'Add to plan'}
         >
@@ -54,22 +57,28 @@ export default function PlaceCard({ place }) {
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 gap-2">
         {/* Categories */}
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1.5">
           {place.categories?.slice(0, 2).map((cat) => (
-            <span key={cat._id} className="badge-primary text-xs">{cat.name}</span>
+            <span key={cat._id} className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary-950/80 border border-primary-800/50 text-primary-300">
+              {cat.name}
+            </span>
           ))}
         </div>
 
-        <h3 className="text-slate-100 font-semibold line-clamp-1">{place.name}</h3>
-        <p className="text-slate-400 text-sm line-clamp-2 flex-1">{place.description}</p>
+        <h3 className="text-slate-100 font-semibold line-clamp-1 group-hover:text-primary-300 transition-colors">
+          {place.name}
+        </h3>
+        <p className="text-slate-400 text-xs sm:text-sm line-clamp-2 flex-1 leading-relaxed">
+          {place.description}
+        </p>
 
-        <div className="flex items-center gap-4 text-slate-500 text-xs mt-auto pt-1">
-          <span className="flex items-center gap-1">
-            <Clock size={12} /> {place.visitDurationMinutes} min
+        <div className="flex items-center justify-between text-slate-400 text-xs mt-auto pt-2 border-t border-surface-border/50">
+          <span className="flex items-center gap-1.5">
+            <Clock size={12} className="text-primary-400" /> {place.visitDurationMinutes} min
           </span>
           {place.distanceKm != null && (
-            <span className="flex items-center gap-1">
-              <MapPin size={12} /> {place.distanceKm.toFixed(1)} km
+            <span className="flex items-center gap-1 font-mono text-teal-300 bg-teal-950/70 border border-teal-800/40 px-2 py-0.5 rounded">
+              <MapPin size={11} /> {place.distanceKm.toFixed(1)} km
             </span>
           )}
         </div>

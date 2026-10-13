@@ -29,9 +29,9 @@ export default function Navbar() {
     `${baseNavLink} text-teal-300 bg-primary-950/90 border border-primary-700/60 shadow-[0_0_12px_rgba(20,184,166,0.25)] font-semibold`;
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#061116]/85 backdrop-blur-2xl border-b border-surface-border/60 shadow-xl shadow-black/25">
+    <nav className="sticky top-0 z-50 bg-[#05070a]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl shadow-black/60">
       {/* Top ambient glowing line */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-teal-400/60 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-teal-400/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
@@ -42,7 +42,7 @@ export default function Navbar() {
             className="flex items-center gap-3 group text-white no-underline transition-transform duration-200 hover:scale-[1.02]"
           >
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-teal-700 p-0.5 shadow-glow flex items-center justify-center">
-              <div className="w-full h-full rounded-[10px] bg-[#071922] flex items-center justify-center text-teal-400 group-hover:text-teal-300 transition-colors">
+              <div className="w-full h-full rounded-[10px] bg-[#07090e] flex items-center justify-center text-teal-400 group-hover:text-teal-300 transition-colors">
                 <Compass size={22} className="group-hover:rotate-45 transition-transform duration-500" />
               </div>
             </div>
