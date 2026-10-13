@@ -91,26 +91,26 @@ export default function HomePage() {
             </div>
           ))}
 
-          {/* Color Wash Overlay 1: Deep Teal / Emerald Tint matching website theme */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-teal-950/75 to-surface/90 mix-blend-multiply pointer-events-none" />
+          {/* Color Wash Overlay 1: Refined Teal / Emerald Wash allowing images to shine through */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-950/45 via-teal-950/30 to-surface/45 mix-blend-multiply pointer-events-none" />
 
-          {/* Color Wash Overlay 2: Top and Bottom Surface Gradient Fade */}
-          <div className="absolute inset-0 bg-gradient-to-b from-surface/85 via-surface/45 to-surface pointer-events-none" />
+          {/* Color Wash Overlay 2: Top header fade & bottom surface blend, leaving center crystal clear */}
+          <div className="absolute inset-0 bg-gradient-to-b from-surface/75 via-transparent to-surface/95 pointer-events-none" />
 
-          {/* Color Wash Overlay 3: Central Radial Cyan/Teal Glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f766e40_0%,_transparent_70%)] pointer-events-none" />
+          {/* Color Wash Overlay 3: Soft Atmospheric Cyan Glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f766e30_0%,_transparent_75%)] pointer-events-none" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
+        {/* Hero Content with Soft Glassmorphic Contrast Backdrop */}
+        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6 px-6 py-8 sm:p-10 rounded-3xl bg-surface/45 backdrop-blur-[8px] border border-white/10 shadow-2xl">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glassmorphism text-primary-300 text-sm font-medium mb-2 shadow-glow">
             <Compass size={14} className="animate-spin-slow" /> Southern Sri Lanka · Walasmulla
           </div>
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight drop-shadow-md">
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight drop-shadow-lg">
             <span className="text-gradient">Plan Your Perfect</span>
             <br />Day in Walasmulla
           </h1>
-          <p className="text-slate-300 text-lg max-w-xl mx-auto leading-relaxed drop-shadow">
+          <p className="text-slate-200 text-lg max-w-xl mx-auto leading-relaxed drop-shadow">
             Discover temples, beaches, waterfalls and wildlife — all within a 25 km radius.
             Build a personalised itinerary in seconds.
           </p>
