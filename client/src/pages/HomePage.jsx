@@ -1,9 +1,37 @@
 /**
  * HomePage.jsx — Landing page with hero, feature highlights and quick links.
  */
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, Shield, ChevronRight, Compass } from 'lucide-react';
 import TourMapWidget from '../components/TourMapWidget';
+
+const HERO_IMAGES = [
+  {
+    url: 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=2560&q=85',
+    title: 'Mulkirigala & Sacred Heritage',
+    location: 'Ancient Rock Cave Monasteries',
+    tag: '🏛️ Sacred Heritage',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=85',
+    title: 'Tangalle Bay & Turtle Beach',
+    location: 'Golden Palm-Fringed Shores',
+    tag: '🏖️ Coastal Paradise',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=2560&q=85',
+    title: 'Hummanaya Blowhole & Ocean Cliffs',
+    location: 'Dramatic Natural Rock Formations',
+    tag: '💨 Natural Wonders',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=2560&q=85',
+    title: 'Muruthawela & Rainforest Canopies',
+    location: 'Serene Mountain Lakes & Wildlife',
+    tag: '🌿 Lush Wildlife',
+  },
+];
 
 const features = [
   {
@@ -30,32 +58,95 @@ const features = [
 ];
 
 export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-advance slideshow every 5.5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5500);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden py-28 px-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/30 via-surface to-surface pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary-600/10 blur-3xl pointer-events-none" />
+      {/* Hero with 4K Image Slideshow & Thematic Color Overlays */}
+      <section className="relative overflow-hidden py-32 px-4 min-h-[600px] flex items-center justify-center">
+        {/* Background Slideshow Layer */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {HERO_IMAGES.map((img, idx) => (
+            <div
+              key={img.url}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                idx === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              <img
+                src={img.url}
+                alt={img.title}
+                className={`w-full h-full object-cover object-center transform transition-transform duration-[6000ms] ease-out ${
+                  idx === currentSlide ? 'scale-105' : 'scale-100'
+                }`}
+              />
+            </div>
+          ))}
 
-        <div className="relative max-w-3xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glassmorphism text-primary-300 text-sm font-medium mb-2">
-            <Compass size={14} /> Southern Sri Lanka · Walasmulla
+          {/* Color Wash Overlay 1: Deep Teal / Emerald Tint matching website theme */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-teal-950/75 to-surface/90 mix-blend-multiply pointer-events-none" />
+
+          {/* Color Wash Overlay 2: Top and Bottom Surface Gradient Fade */}
+          <div className="absolute inset-0 bg-gradient-to-b from-surface/85 via-surface/45 to-surface pointer-events-none" />
+
+          {/* Color Wash Overlay 3: Central Radial Cyan/Teal Glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f766e40_0%,_transparent_70%)] pointer-events-none" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glassmorphism text-primary-300 text-sm font-medium mb-2 shadow-glow">
+            <Compass size={14} className="animate-spin-slow" /> Southern Sri Lanka · Walasmulla
           </div>
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight drop-shadow-md">
             <span className="text-gradient">Plan Your Perfect</span>
             <br />Day in Walasmulla
           </h1>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+          <p className="text-slate-300 text-lg max-w-xl mx-auto leading-relaxed drop-shadow">
             Discover temples, beaches, waterfalls and wildlife — all within a 25 km radius.
             Build a personalised itinerary in seconds.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-            <Link to="/places" className="btn-primary text-base px-6 py-3">
+            <Link to="/places" className="btn-primary text-base px-6 py-3 shadow-glow">
               Explore Places <ChevronRight size={18} />
             </Link>
-            <Link to="/planner" className="btn-secondary text-base px-6 py-3">
+            <Link to="/planner" className="btn-secondary text-base px-6 py-3 backdrop-blur-md">
               <Calendar size={18} /> Plan a Day
             </Link>
+          </div>
+        </div>
+
+        {/* Bottom Slide Indicators & Location Tag */}
+        <div className="absolute bottom-6 inset-x-0 z-10 max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none">
+          {/* Active location tag */}
+          <div className="pointer-events-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glassmorphism text-xs text-slate-200 border border-teal-500/30 backdrop-blur-md shadow-lg">
+            <span className="text-teal-400 font-semibold">{HERO_IMAGES[currentSlide].tag}</span>
+            <span className="text-slate-500">·</span>
+            <span className="text-slate-300">{HERO_IMAGES[currentSlide].title}</span>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="pointer-events-auto flex items-center gap-2">
+            {HERO_IMAGES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`transition-all duration-300 rounded-full ${
+                  i === currentSlide
+                    ? 'w-7 h-2 bg-gradient-to-r from-teal-400 to-primary-500 shadow-[0_0_8px_#14b8a6]'
+                    : 'w-2 h-2 bg-slate-600/70 hover:bg-slate-400'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </section>
