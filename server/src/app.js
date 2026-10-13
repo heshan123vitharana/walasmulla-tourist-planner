@@ -26,13 +26,12 @@ const mongoose   = require('mongoose');
 const { noSqlSanitise }  = require('./middleware/noSqlSanitise');
 const { errorHandler }   = require('./middleware/errorHandler');
 
-// Route modules (added incrementally across milestones)
-const authRoutes  = require('./routes/auth');
-// M2 routes (added in M2):
-// const placeRoutes    = require('./routes/places');
-// const categoryRoutes = require('./routes/categories');
-// const planRoutes     = require('./routes/plans');
-// const adminRoutes    = require('./routes/admin');
+// Route modules
+const authRoutes     = require('./routes/auth');
+const placeRoutes    = require('./routes/places');
+const categoryRoutes = require('./routes/categories');
+const planRoutes     = require('./routes/plans');
+const adminRoutes    = require('./routes/admin');
 
 const app = express();
 
@@ -90,11 +89,16 @@ const generalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many requests, please try again later' },
+  skip: () => process.env.NODE_ENV === 'test',
 });
 app.use('/api', generalLimiter);
 
 /* ─── Routes ─────────────────────────────────────────────────── */
-app.use('/api/auth', authRoutes);
+app.use('/api/auth',       authRoutes);
+app.use('/api/places',     placeRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/plans',      planRoutes);
+app.use('/api/admin',      adminRoutes);
 
 // Health check (useful for Docker / load balancer probes)
 app.get('/api/health', (_req, res) => {
