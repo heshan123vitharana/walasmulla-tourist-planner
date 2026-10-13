@@ -62,8 +62,8 @@ const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow same-origin requests (no Origin header) and listed origins
-      if (!origin || allowedOrigins.includes(origin)) {
+      const isLocalhost = process.env.NODE_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin);
+      if (!origin || allowedOrigins.includes(origin) || isLocalhost) {
         callback(null, true);
       } else {
         callback(new Error(`CORS: origin ${origin} not allowed`));
