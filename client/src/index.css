@@ -128,4 +128,9 @@
     scrollbar-width: thin;
     scrollbar-color: theme('colors.surface.border') transparent;
   }
+
+  /* Seamless Dark Mode for OpenStreetMap tiles without any API Key watermark */
+  .leaflet-dark-tiles {
+    filter: brightness(0.7) invert(1) contrast(2.2) hue-rotate(195deg) saturate(0.4) !important;
+  }
 }

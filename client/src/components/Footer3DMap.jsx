@@ -1,90 +1,369 @@
 /**
- * Footer3DMap.jsx — Interactive 3D Perspective Map with animated vehicle touring Southern Sri Lanka.
+ * Footer3DMap.jsx — Real Map with Animated 3D Tour Vehicle across Walasmulla & Southern Sri Lanka.
  * Features:
- *   - 3D tilted isometric perspective with glowing terrain grid
- *   - Road network connecting key tourist destinations around Walasmulla (25 km radius)
- *   - Smooth 60fps vehicle animation following the scenic tour circuit with rotating headlights
- *   - Active waypoint detection & live telemetry HUD
- *   - Interactive destination pins with distance callouts
+ *   - Real interactive Leaflet map (OpenStreetMap / CartoDB / Esri Satellite)
+ *   - 10 real geo-located destination markers with popups & tooltips
+ *   - 3D-styled animated vehicle smoothly driving along the authentic southern tour circuit
+ *   - Golden headlight beam effect rotating along the road direction
+ *   - Layer switcher: Dark Mode Map / Real Satellite / Street View
+ *   - 3D Isometric Tilt toggle (Perspective view vs Standard Flat map)
+ *   - Telemetry HUD showing live nearest spot, speed, distance
  */
 import { useEffect, useRef, useState } from 'react';
-import { Compass, Car, Play, Pause, FastForward, Eye, MapPin, Sparkles } from 'lucide-react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import {
+  Compass, Eye, Play, Pause, FastForward, Layers,
+  MapPin, Sparkles, Navigation, Globe
+} from 'lucide-react';
 
-const DESTINATIONS = [
-  { id: 'walasmulla', name: 'Walasmulla Town Hub', icon: '📍', x: 420, y: 250, distance: '0 km', type: 'Hub' },
-  { id: 'mulkirigala', name: 'Mulkirigala Rock Temple', icon: '🏛️', x: 330, y: 160, distance: '11 km', type: 'Heritage' },
-  { id: 'muruthawela', name: 'Muruthawela Reservoir', icon: '💧', x: 190, y: 210, distance: '16 km', type: 'Nature' },
-  { id: 'kasagala', name: 'Kasagala Raja Maha Vihara', icon: '⛩️', x: 560, y: 150, distance: '14 km', type: 'Religious' },
-  { id: 'ussangoda', name: 'Ussangoda Red Cliffs', icon: '🪨', x: 740, y: 260, distance: '26 km', type: 'Nature' },
-  { id: 'kalametiya', name: 'Kalametiya Bird Sanctuary', icon: '🪶', x: 700, y: 370, distance: '24 km', type: 'Nature' },
-  { id: 'rekawa', name: 'Rekawa Turtle Beach', icon: '🐢', x: 590, y: 350, distance: '22 km', type: 'Nature' },
-  { id: 'tangalle', name: 'Tangalle Sandy Bay', icon: '🏖️', x: 470, y: 390, distance: '19 km', type: 'Beach' },
-  { id: 'hummanaya', name: 'Hummanaya Blowhole', icon: '💨', x: 340, y: 430, distance: '24 km', type: 'Nature' },
-  { id: 'wewurukannala', name: 'Wewurukannala Vihara', icon: '🛕', x: 260, y: 350, distance: '22 km', type: 'Cultural' },
+// Real coordinates of tourist spots around Walasmulla (25 km radius)
+const REAL_DESTINATIONS = [
+  { id: 'walasmulla', name: 'Walasmulla Town Hub', icon: '📍', lat: 6.155, lng: 80.700, distance: '0 km', type: 'Hub', desc: 'Central clock tower junction' },
+  { id: 'mulkirigala', name: 'Mulkirigala Rock Temple', icon: '🏛️', lat: 6.126, lng: 80.669, distance: '11 km', type: 'Heritage', desc: 'Ancient rock cave monastery' },
+  { id: 'muruthawela', name: 'Muruthawela Reservoir', icon: '💧', lat: 6.210, lng: 80.630, distance: '16 km', type: 'Nature', desc: 'Scenic mountain lake & dam' },
+  { id: 'kasagala', name: 'Kasagala Raja Maha Vihara', icon: '⛩️', lat: 6.180, lng: 80.770, distance: '14 km', type: 'Religious', desc: 'Historic temple with ruins' },
+  { id: 'ussangoda', name: 'Ussangoda Red Cliffs', icon: '🪨', lat: 6.105, lng: 80.985, distance: '26 km', type: 'Nature', desc: 'Red soil plateau & sea view' },
+  { id: 'kalametiya', name: 'Kalametiya Bird Sanctuary', icon: '🪶', lat: 6.085, lng: 80.940, distance: '24 km', type: 'Nature', desc: 'Coastal lagoon & wetland' },
+  { id: 'rekawa', name: 'Rekawa Turtle Beach', icon: '🐢', lat: 6.030, lng: 80.838, distance: '22 km', type: 'Nature', desc: 'Sea turtle nesting beach' },
+  { id: 'tangalle', name: 'Tangalle Sandy Bay', icon: '🏖️', lat: 6.025, lng: 80.793, distance: '19 km', type: 'Beach', desc: 'Golden palm-fringed coast' },
+  { id: 'hummanaya', name: 'Hummanaya Blowhole', icon: '💨', lat: 5.975, lng: 80.730, distance: '24 km', type: 'Nature', desc: 'Natural sea geyser rock' },
+  { id: 'wewurukannala', name: 'Wewurukannala Vihara', icon: '🛕', lat: 5.963, lng: 80.705, distance: '22 km', type: 'Cultural', desc: '50m Giant Buddha statue' },
 ];
 
-// Closed circuit path traversing the scenic highlights
-const CIRCUIT_PATH = `
-  M 420,250
-  C 380,210 350,180 330,160
-  C 260,140 210,180 190,210
-  C 230,240 360,240 420,250
-  C 480,210 520,170 560,150
-  C 640,170 700,210 740,260
-  C 730,320 720,350 700,370
-  C 660,370 620,350 590,350
-  C 540,370 500,390 470,390
-  C 410,420 370,430 340,430
-  C 290,410 270,380 260,350
-  C 270,290 350,270 420,250
-`;
+// Waypoints tracing realistic roads connecting the spots
+const ROAD_CIRCUIT_WAYPOINTS = [
+  [6.155, 80.700], // Walasmulla
+  [6.168, 80.735],
+  [6.180, 80.770], // Kasagala
+  [6.165, 80.820],
+  [6.135, 80.890],
+  [6.115, 80.950],
+  [6.105, 80.985], // Ussangoda
+  [6.095, 80.960],
+  [6.085, 80.940], // Kalametiya
+  [6.050, 80.890],
+  [6.035, 80.860],
+  [6.030, 80.838], // Rekawa
+  [6.028, 80.815],
+  [6.025, 80.793], // Tangalle
+  [6.000, 80.760],
+  [5.985, 80.745],
+  [5.975, 80.730], // Hummanaya
+  [5.968, 80.718],
+  [5.963, 80.705], // Wewurukannala
+  [5.990, 80.695],
+  [6.040, 80.685],
+  [6.090, 80.675],
+  [6.126, 80.669], // Mulkirigala
+  [6.160, 80.650],
+  [6.190, 80.638],
+  [6.210, 80.630], // Muruthawela
+  [6.185, 80.665],
+  [6.155, 80.700], // Back to Walasmulla
+];
+
+// Densely interpolate points along waypoints for 60fps smooth animation
+function generateDensePath(points, segmentsPerLeg = 28) {
+  const dense = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    for (let s = 0; s < segmentsPerLeg; s++) {
+      const t = s / segmentsPerLeg;
+      const lat = p1[0] + (p2[0] - p1[0]) * t;
+      const lng = p1[1] + (p2[1] - p1[1]) * t;
+      dense.push([lat, lng]);
+    }
+  }
+  return dense;
+}
+
+const DENSE_CIRCUIT = generateDensePath(ROAD_CIRCUIT_WAYPOINTS);
+
+// Tile layer providers
+const MAP_TILES = {
+  dark: {
+    name: 'Dark Map',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors',
+    className: 'leaflet-dark-tiles',
+  },
+  satellite: {
+    name: 'Satellite',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+    className: '',
+  },
+  street: {
+    name: 'Street View',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors',
+    className: '',
+  },
+};
 
 export default function Footer3DMap() {
-  const pathRef = useRef(null);
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const tileLayerRef = useRef(null);
+  const carMarkerRef = useRef(null);
   const animFrameRef = useRef(null);
+
+  const [activeTile, setActiveTile] = useState('dark');
+  const [is3D, setIs3D] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
-  const [is3D, setIs3D] = useState(true);
-  const [hoveredSpot, setHoveredSpot] = useState(null);
-  const [nearestSpot, setNearestSpot] = useState(DESTINATIONS[0]);
-  const [carState, setCarState] = useState({ x: 420, y: 250, angle: 0, progress: 0 });
+  const [nearestSpot, setNearestSpot] = useState(REAL_DESTINATIONS[0]);
+  const [currentSpeedKmh, setCurrentSpeedKmh] = useState(42);
 
+  // Initialize Leaflet Map
   useEffect(() => {
-    let progress = carState.progress;
+    if (!mapContainerRef.current) return;
+
+    // Centered around Walasmulla & Southern coastal curve
+    const map = L.map(mapContainerRef.current, {
+      center: [6.09, 80.81],
+      zoom: 11,
+      minZoom: 10,
+      maxZoom: 16,
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+    });
+    mapInstanceRef.current = map;
+
+    // Add base tile layer
+    const initTile = MAP_TILES[activeTile];
+    tileLayerRef.current = L.tileLayer(initTile.url, {
+      maxZoom: 19,
+      className: initTile.className || '',
+    }).addTo(map);
+
+    // Add zoom control in top-right
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Road circuit polyline - glow backdrop & dashed line
+    L.polyline(ROAD_CIRCUIT_WAYPOINTS, {
+      color: '#0d9488',
+      weight: 8,
+      opacity: 0.35,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(map);
+
+    L.polyline(ROAD_CIRCUIT_WAYPOINTS, {
+      color: '#14b8a6',
+      weight: 3.5,
+      dashArray: '6 8',
+      opacity: 0.95,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(map);
+
+    // Place Markers
+    REAL_DESTINATIONS.forEach((dest) => {
+      const isHub = dest.id === 'walasmulla';
+      const iconHtml = `
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+          <div style="
+            width: ${isHub ? '34px' : '28px'};
+            height: ${isHub ? '34px' : '28px'};
+            border-radius: ${isHub ? '12px' : '9px'};
+            background: ${isHub ? 'linear-gradient(135deg, #0d9488, #14b8a6)' : '#0f172a'};
+            border: 2px solid ${isHub ? '#5eead4' : '#14b8a6'};
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: ${isHub ? '16px' : '13px'};
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 10px rgba(20,184,166,0.4);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+          ">
+            ${dest.icon}
+          </div>
+          <div style="
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            background: rgba(4, 13, 18, 0.92);
+            color: #ccfbf1;
+            border: 1px solid rgba(20, 184, 166, 0.4);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 4px;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+          ">
+            ${dest.name.split(' ')[0]}
+          </div>
+        </div>
+      `;
+
+      const customIcon = L.divIcon({
+        html: iconHtml,
+        className: 'custom-map-pin',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+
+      const marker = L.marker([dest.lat, dest.lng], { icon: customIcon }).addTo(map);
+      marker.bindPopup(`
+        <div style="font-family: inherit; padding: 2px; min-width: 150px; color: #0f172a;">
+          <h4 style="font-weight: 700; margin: 0 0 4px 0; color: #0f766e; font-size: 14px;">
+            ${dest.icon} ${dest.name}
+          </h4>
+          <p style="margin: 0 0 4px 0; font-size: 12px; color: #475569;">${dest.desc}</p>
+          <div style="font-size: 11px; font-weight: 600; color: #0284c7;">
+            📍 Distance from Walasmulla: ${dest.distance}
+          </div>
+        </div>
+      `);
+    });
+
+    // 3D Animated Vehicle Marker with Headlights
+    const carIconHtml = `
+      <div id="footer-car-container" style="
+        position: relative;
+        width: 36px;
+        height: 20px;
+        transform-origin: center center;
+        transition: transform 0.08s linear;
+      ">
+        <!-- Glowing Headlight Beam -->
+        <div style="
+          position: absolute;
+          left: 28px;
+          top: -14px;
+          width: 70px;
+          height: 48px;
+          background: radial-gradient(ellipse at left, rgba(56, 189, 248, 0.8) 0%, rgba(20, 184, 166, 0.3) 40%, transparent 80%);
+          clip-path: polygon(0% 45%, 100% 0%, 100% 100%, 0% 55%);
+          filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+          pointer-events: none;
+        "></div>
+
+        <!-- Ground Shadow -->
+        <div style="
+          position: absolute;
+          inset: 0;
+          background: rgba(0,0,0,0.8);
+          border-radius: 9999px;
+          transform: translateY(2px) scale(0.9);
+          filter: blur(2px);
+        "></div>
+
+        <!-- 3D Styled Safari Jeep / Tourist SUV -->
+        <div style="
+          position: relative;
+          width: 32px;
+          height: 18px;
+          background: linear-gradient(90deg, #14b8a6, #0d9488 60%, #042f2e);
+          border: 1.5px solid #5eead4;
+          border-radius: 5px;
+          box-shadow: 0 0 14px #14b8a6, inset 0 1px 2px rgba(255,255,255,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 2px;
+        ">
+          <!-- Rear red brake lights -->
+          <div style="width: 2px; height: 10px; background: #f43f5e; border-radius: 1px; box-shadow: 0 0 6px #f43f5e;"></div>
+          
+          <!-- Roof / Cab -->
+          <div style="width: 14px; height: 10px; background: #0f172a; border: 1px solid rgba(94, 234, 212, 0.6); border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 8px; height: 4px; background: #38bdf8; border-radius: 1px; opacity: 0.85;"></div>
+          </div>
+
+          <!-- Front bright headlights -->
+          <div style="width: 2px; height: 10px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 8px #fef08a;"></div>
+        </div>
+      </div>
+    `;
+
+    const carDivIcon = L.divIcon({
+      html: carIconHtml,
+      className: 'custom-car-marker',
+      iconSize: [36, 20],
+      iconAnchor: [18, 10],
+    });
+
+    carMarkerRef.current = L.marker(DENSE_CIRCUIT[0], {
+      icon: carDivIcon,
+      zIndexOffset: 1000,
+    }).addTo(map);
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+  }, []);
+
+  // Update base tile when changed
+  useEffect(() => {
+    if (!mapInstanceRef.current || !tileLayerRef.current) return;
+    mapInstanceRef.current.removeLayer(tileLayerRef.current);
+    const updatedTile = MAP_TILES[activeTile];
+    tileLayerRef.current = L.tileLayer(updatedTile.url, {
+      maxZoom: 19,
+      className: updatedTile.className || '',
+    }).addTo(mapInstanceRef.current);
+  }, [activeTile]);
+
+  // 60fps Vehicle Animation Loop along Dense Circuit
+  useEffect(() => {
+    let index = 0;
     let lastTime = performance.now();
 
     const loop = (currentTime) => {
       const delta = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
 
-      if (isPlaying && pathRef.current) {
-        const pathEl = pathRef.current;
-        const totalLength = pathEl.getTotalLength();
+      if (isPlaying && carMarkerRef.current && DENSE_CIRCUIT.length > 0) {
+        // Step forward along path based on speed
+        const step = delta * 18 * speed;
+        index = (index + step) % DENSE_CIRCUIT.length;
 
-        // Increment progress (circuit loop in ~24s at 1x speed)
-        const speedMultiplier = (totalLength / 24) * speed;
-        progress = (progress + speedMultiplier * delta) % totalLength;
+        const currIdx = Math.floor(index);
+        const nextIdx = (currIdx + 1) % DENSE_CIRCUIT.length;
 
-        const p1 = pathEl.getPointAtLength(progress);
-        const p2 = pathEl.getPointAtLength((progress + 3) % totalLength);
+        const p1 = DENSE_CIRCUIT[currIdx];
+        const p2 = DENSE_CIRCUIT[nextIdx];
 
-        const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
+        carMarkerRef.current.setLatLng(p1);
 
-        setCarState({ x: p1.x, y: p1.y, angle, progress });
+        // Calculate vehicle bearing angle in degrees
+        const dLat = p2[0] - p1[0];
+        const dLng = p2[1] - p1[1];
+        const angleDeg = Math.atan2(dLat, dLng) * (180 / Math.PI);
+        // Leaflet / SVG orientation correction (North is up = negative dLat, East is right = positive dLng)
+        const screenAngle = Math.atan2(-dLat, dLng) * (180 / Math.PI);
 
-        // Find nearest destination
-        let closest = DESTINATIONS[0];
+        const carEl = document.getElementById('footer-car-container');
+        if (carEl) {
+          carEl.style.transform = `rotate(${screenAngle}deg)`;
+        }
+
+        // Check nearest tourist destination
+        let closest = REAL_DESTINATIONS[0];
         let minDist = Infinity;
-        for (const dest of DESTINATIONS) {
-          const d = Math.hypot(dest.x - p1.x, dest.y - p1.y);
+        for (const dest of REAL_DESTINATIONS) {
+          const d = Math.hypot(dest.lat - p1[0], dest.lng - p1[1]);
           if (d < minDist) {
             minDist = d;
             closest = dest;
           }
         }
-        if (minDist < 60) {
+        if (minDist < 0.05) {
           setNearestSpot(closest);
         }
+
+        // Slight natural speed fluctuation
+        setCurrentSpeedKmh(Math.round(38 + Math.sin(index * 0.1) * 7 * speed));
       }
 
       animFrameRef.current = requestAnimationFrame(loop);
@@ -95,36 +374,74 @@ export default function Footer3DMap() {
   }, [isPlaying, speed]);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl border border-primary-800/40 bg-gradient-to-b from-surface-card/90 via-[#071318]/95 to-surface-card/90 backdrop-blur-2xl p-4 sm:p-6 shadow-2xl">
+    <div className="relative w-full overflow-hidden rounded-3xl border border-primary-800/50 bg-gradient-to-b from-surface-card/95 via-[#040e14]/98 to-surface-card/95 backdrop-blur-2xl p-4 sm:p-6 shadow-2xl">
       {/* Background radial atmosphere */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-primary-600/10 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary-600/10 blur-[130px] pointer-events-none rounded-full" />
 
-      {/* Header telemetry HUD */}
+      {/* Header Telemetry HUD & Controls */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-surface-border/50 pb-4 mb-4">
+        {/* Left: Branding & Status */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-400 shadow-glow">
-            <Compass size={20} className="animate-spin-slow" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-teal-700 flex items-center justify-center text-white shadow-glow">
+            <Compass size={22} className="animate-spin-slow" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-100 tracking-tight">
-                Walasmulla Tourism Radar
+                Walasmulla Real Geographic Tour Radar
               </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                Live 3D Route
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                Live Simulation
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5">
-              <span>Next Highlight:</span>
+            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+              <span>Approaching Spot:</span>
               <span className="font-semibold text-primary-300">
                 {nearestSpot.icon} {nearestSpot.name} ({nearestSpot.distance})
               </span>
+              <span className="text-slate-600">·</span>
+              <span className="font-mono text-emerald-400">{currentSpeedKmh} km/h</span>
             </p>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center gap-2 text-xs">
+        {/* Right: Interactive controls */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {/* Map Layer Switcher */}
+          <div className="flex items-center rounded-lg border border-surface-border bg-surface/80 p-0.5">
+            <button
+              onClick={() => setActiveTile('dark')}
+              className={`px-2 py-1 rounded text-xs transition-colors ${
+                activeTile === 'dark'
+                  ? 'bg-primary-950 text-primary-300 font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🌙 Dark
+            </button>
+            <button
+              onClick={() => setActiveTile('satellite')}
+              className={`px-2 py-1 rounded text-xs transition-colors ${
+                activeTile === 'satellite'
+                  ? 'bg-primary-950 text-primary-300 font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🛰️ Satellite
+            </button>
+            <button
+              onClick={() => setActiveTile('street')}
+              className={`px-2 py-1 rounded text-xs transition-colors ${
+                activeTile === 'street'
+                  ? 'bg-primary-950 text-primary-300 font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🗺️ Streets
+            </button>
+          </div>
+
+          {/* 3D Perspective Tilt Button */}
           <button
             onClick={() => setIs3D(!is3D)}
             className={`btn-ghost text-xs px-2.5 py-1.5 rounded-lg border flex items-center gap-1.5 transition-all ${
@@ -132,23 +449,24 @@ export default function Footer3DMap() {
                 ? 'bg-primary-950/80 border-primary-700/60 text-primary-300'
                 : 'border-surface-border text-slate-400'
             }`}
-            title="Toggle 3D Isometric View"
+            title="Toggle 3D Perspective Tilt"
           >
-            <Eye size={13} /> {is3D ? '3D Angle' : '2D Plan'}
+            <Eye size={13} /> {is3D ? '3D View' : '2D Map'}
           </button>
 
+          {/* Speed Toggle */}
           <button
             onClick={() => setSpeed(s => (s === 1 ? 2 : s === 2 ? 0.5 : 1))}
             className="btn-ghost text-xs px-2.5 py-1.5 rounded-lg border border-surface-border text-slate-300 hover:text-primary-300 flex items-center gap-1"
-            title="Simulation Speed"
+            title="Tour Speed"
           >
-            <FastForward size={13} /> {speed}x Speed
+            <FastForward size={13} /> {speed}x
           </button>
 
+          {/* Play/Pause */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             className="btn-primary text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-glow"
-            title={isPlaying ? 'Pause Simulation' : 'Start Simulation'}
           >
             {isPlaying ? <Pause size={13} /> : <Play size={13} />}
             <span>{isPlaying ? 'Pause' : 'Tour'}</span>
@@ -156,217 +474,36 @@ export default function Footer3DMap() {
         </div>
       </div>
 
-      {/* 3D Perspective Map Stage */}
+      {/* Real Map Stage with 3D Perspective Transform */}
       <div
-        className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center overflow-hidden rounded-2xl bg-[#040d12] border border-surface-border/40 select-none cursor-crosshair transition-transform duration-700 ease-out"
+        className="relative w-full h-[400px] sm:h-[460px] rounded-2xl overflow-hidden border border-surface-border/50 transition-all duration-700 ease-out"
         style={{
-          perspective: '1000px',
+          perspective: '1200px',
         }}
       >
-        {/* Transforming plane container */}
         <div
-          className="relative w-[900px] h-[520px] transition-transform duration-700 ease-out origin-center shrink-0"
+          className="w-full h-full transition-transform duration-700 ease-out origin-center"
           style={{
             transform: is3D
-              ? 'rotateX(30deg) rotateZ(-4deg) translateY(-20px) scale(0.92)'
+              ? 'rotateX(26deg) rotateZ(-2deg) scale(1.08) translateY(-15px)'
               : 'none',
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* Stylized Grid Ground Floor */}
-          <div
-            className="absolute inset-0 rounded-3xl pointer-events-none opacity-40"
-            style={{
-              backgroundImage: `
-                linear-gradient(to right, rgba(20, 184, 166, 0.12) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(20, 184, 166, 0.12) 1px, transparent 1px)
-              `,
-              backgroundSize: '40px 40px',
-            }}
-          />
-
-          {/* Walasmulla 25km Radius Radar Rings */}
-          <div className="absolute left-[420px] top-[250px] -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-primary-500/15 pointer-events-none" />
-          <div className="absolute left-[420px] top-[250px] -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-primary-500/10 border-dashed pointer-events-none" />
-          <div className="absolute left-[420px] top-[250px] -translate-x-1/2 -translate-y-1/2 text-[10px] font-mono text-primary-500/40 tracking-wider">
-            25 KM RADIUS ZONE
-          </div>
-
-          {/* SVG Road Network & Circuit Line */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-            <defs>
-              {/* Glowing Road Gradient */}
-              <linearGradient id="roadGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#0d9488" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#14b8a6" stopOpacity="1" />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.8" />
-              </linearGradient>
-
-              {/* Headlight Beam Cone Filter */}
-              <filter id="headlightBlur" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
-              </filter>
-            </defs>
-
-            {/* Secondary linking routes */}
-            <path
-              d="M 420,250 L 330,160 M 420,250 L 560,150 M 420,250 L 470,390 M 420,250 L 260,350 M 470,390 L 590,350 M 590,350 L 700,370 M 700,370 L 740,260"
-              stroke="#0f766e"
-              strokeWidth="2"
-              strokeDasharray="4 6"
-              strokeOpacity="0.35"
-              fill="none"
-            />
-
-            {/* Main Scenic Tour Circuit Road (Underneath Dark Track) */}
-            <path
-              d={CIRCUIT_PATH}
-              stroke="#042f2e"
-              strokeWidth="12"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-            {/* Road borders */}
-            <path
-              d={CIRCUIT_PATH}
-              stroke="#115e59"
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-            {/* Animated Glowing Centerline */}
-            <path
-              ref={pathRef}
-              d={CIRCUIT_PATH}
-              stroke="url(#roadGlow)"
-              strokeWidth="2.5"
-              strokeDasharray="6 8"
-              className="animate-pulse"
-              fill="none"
-            />
-          </svg>
-
-          {/* Destination Markers */}
-          {DESTINATIONS.map((dest) => {
-            const isTarget = nearestSpot.id === dest.id;
-            const isHovered = hoveredSpot?.id === dest.id;
-            const isHub = dest.id === 'walasmulla';
-
-            return (
-              <div
-                key={dest.id}
-                onMouseEnter={() => setHoveredSpot(dest)}
-                onMouseLeave={() => setHoveredSpot(null)}
-                style={{
-                  left: `${dest.x}px`,
-                  top: `${dest.y}px`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-                className="absolute z-20 cursor-pointer group"
-              >
-                {/* Ping wave on nearest target */}
-                {isTarget && (
-                  <span className="absolute -inset-3 rounded-full bg-teal-400/20 animate-ping pointer-events-none" />
-                )}
-
-                {/* Marker Body */}
-                <div
-                  className={`relative flex items-center justify-center transition-transform duration-300 ${
-                    isHovered || isTarget ? 'scale-125 -translate-y-2' : 'scale-100'
-                  }`}
-                >
-                  {isHub ? (
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary-600 to-emerald-400 border-2 border-white/80 shadow-glow flex items-center justify-center text-lg text-white font-bold">
-                      📍
-                    </div>
-                  ) : (
-                    <div
-                      className={`w-8 h-8 rounded-xl border flex items-center justify-center text-sm shadow-md transition-colors ${
-                        isTarget
-                          ? 'bg-teal-900 border-teal-300 shadow-glow text-white'
-                          : 'bg-surface-card/90 border-surface-border text-slate-200 group-hover:border-primary-400'
-                      }`}
-                    >
-                      {dest.icon}
-                    </div>
-                  )}
-
-                  {/* Marker Pin Shadow */}
-                  <div className="absolute -bottom-2 w-5 h-2 bg-black/60 rounded-full blur-[2px] pointer-events-none" />
-                </div>
-
-                {/* Always visible or hover badge */}
-                <div
-                  className={`absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 rounded-md text-[11px] font-medium whitespace-nowrap transition-all duration-200 pointer-events-none shadow-lg ${
-                    isTarget || isHovered
-                      ? 'bg-slate-900/95 text-teal-300 border border-teal-500/50 opacity-100 scale-100'
-                      : 'bg-slate-950/75 text-slate-300 border border-slate-800 opacity-80 scale-90'
-                  }`}
-                >
-                  {dest.name.split(' ')[0]} · {dest.distance}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* 3D Animated Vehicle & Headlight Beam */}
-          <div
-            style={{
-              left: `${carState.x}px`,
-              top: `${carState.y}px`,
-              transform: `translate(-50%, -50%) rotate(${carState.angle}deg)`,
-              transformOrigin: 'center center',
-            }}
-            className="absolute z-30 pointer-events-none transition-transform duration-75"
-          >
-            {/* Glowing Golden Headlight Beam Projecting Forward */}
-            <div
-              className="absolute left-6 top-1/2 -translate-y-1/2 w-32 h-20 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(ellipse at left, rgba(56, 189, 248, 0.6) 0%, rgba(20, 184, 166, 0.2) 40%, transparent 80%)',
-                clipPath: 'polygon(0% 45%, 100% 0%, 100% 100%, 0% 55%)',
-                filter: 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.5))',
-              }}
-            />
-
-            {/* Vehicle Ground Shadow */}
-            <div className="absolute inset-0 w-9 h-5 -translate-x-1 translate-y-1 bg-black/80 rounded-full blur-[3px]" />
-
-            {/* 3D Isometric Tour Jeep / SUV Asset */}
-            <div className="relative w-8 h-5 rounded-md bg-gradient-to-r from-teal-400 via-primary-500 to-teal-600 border border-teal-200 shadow-[0_0_15px_#14b8a6] flex items-center justify-between px-1">
-              {/* Back lights */}
-              <div className="w-1 h-3 bg-rose-500 rounded-sm shadow-[0_0_6px_#f43f5e]" />
-
-              {/* Roof Rack & Cab */}
-              <div className="w-4 h-3 rounded-sm bg-slate-900 border border-teal-300/60 flex items-center justify-center">
-                <div className="w-2.5 h-1.5 bg-sky-400/80 rounded-[1px]" />
-              </div>
-
-              {/* Front Headlights */}
-              <div className="w-1 h-3 bg-amber-200 rounded-sm shadow-[0_0_8px_#fef08a]" />
-            </div>
-
-            {/* Mini Label Follower */}
-            <div
-              className="absolute -top-6 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-teal-950/90 text-teal-300 border border-teal-400/50 whitespace-nowrap"
-              style={{ transform: `rotate(${-carState.angle}deg)` }}
-            >
-              TOUR JEEP
-            </div>
-          </div>
+          {/* Leaflet DOM container */}
+          <div ref={mapContainerRef} className="w-full h-full z-0" />
         </div>
 
-        {/* Floating Quick Legend in bottom left corner */}
-        <div className="absolute bottom-3 left-3 z-20 flex items-center gap-3 px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 backdrop-blur-md">
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_6px_#14b8a6]" />
-            <span>Scenic Tour Circuit</span>
+        {/* Floating Quick Legend in bottom corner */}
+        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-slate-800 text-[11px] text-slate-300 backdrop-blur-md shadow-lg pointer-events-none">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_#14b8a6]" />
+            <span className="font-medium">Real Scenic Tour Route</span>
           </span>
           <span className="text-slate-600">·</span>
-          <span>10 Key Destinations Marked</span>
+          <span>10 Destination Markers with Real GPS Coordinates</span>
+          <span className="text-slate-600">·</span>
+          <span className="text-primary-400 font-semibold">Walasmulla 25 km Circuit</span>
         </div>
       </div>
     </div>
