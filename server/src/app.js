@@ -15,6 +15,12 @@
  *  10. Global error handler
  */
 require('dotenv').config();
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Ignore in environments where setServers is restricted
+}
 const express    = require('express');
 const helmet     = require('helmet');
 const cors       = require('cors');

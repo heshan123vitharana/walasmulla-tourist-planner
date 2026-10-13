@@ -16,6 +16,13 @@
  *   - Is idempotent: safe to run multiple times.
  */
 require('dotenv').config();
+const dns = require('dns');
+// Ensure SRV records for MongoDB Atlas resolve properly across local ISP DNS
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Ignore in environments where setServers is restricted
+}
 const mongoose = require('mongoose');
 const User = require('../src/models/User');
 const Category = require('../src/models/Category');

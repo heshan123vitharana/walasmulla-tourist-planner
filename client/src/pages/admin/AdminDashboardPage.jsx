@@ -7,8 +7,8 @@ import {
   adminGetPlaces, adminDeletePlace,
   adminGetUsers, adminSetUserStatus, adminDeleteUser,
   adminCreateCategory, adminDeleteCategory,
-} from '../api/api';
-import { getCategories } from '../api/api';
+  getCategories,
+} from '../../api/api';
 
 const tabs = ['Places', 'Categories', 'Users'];
 
