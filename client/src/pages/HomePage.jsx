@@ -101,8 +101,8 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f766e30_0%,_transparent_75%)] pointer-events-none" />
         </div>
 
-        {/* Hero Content with Soft Glassmorphic Contrast Backdrop */}
-        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6 px-6 py-8 sm:p-10 rounded-3xl bg-surface/45 backdrop-blur-[8px] border border-white/10 shadow-2xl">
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glassmorphism text-primary-300 text-sm font-medium mb-2 shadow-glow">
             <Compass size={14} className="animate-spin-slow" /> Southern Sri Lanka · Walasmulla
           </div>
@@ -124,30 +124,20 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom Slide Indicators & Location Tag */}
-        <div className="absolute bottom-6 inset-x-0 z-10 max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none">
-          {/* Active location tag */}
-          <div className="pointer-events-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glassmorphism text-xs text-slate-200 border border-teal-500/30 backdrop-blur-md shadow-lg">
-            <span className="text-teal-400 font-semibold">{HERO_IMAGES[currentSlide].tag}</span>
-            <span className="text-slate-500">·</span>
-            <span className="text-slate-300">{HERO_IMAGES[currentSlide].title}</span>
-          </div>
-
-          {/* Dots Indicator */}
-          <div className="pointer-events-auto flex items-center gap-2">
-            {HERO_IMAGES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`transition-all duration-300 rounded-full ${
-                  i === currentSlide
-                    ? 'w-7 h-2 bg-gradient-to-r from-teal-400 to-primary-500 shadow-[0_0_8px_#14b8a6]'
-                    : 'w-2 h-2 bg-slate-600/70 hover:bg-slate-400'
-                }`}
-              />
-            ))}
-          </div>
+        {/* Bottom Slide Indicators */}
+        <div className="absolute bottom-6 inset-x-0 z-10 flex items-center justify-center gap-2">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`transition-all duration-300 rounded-full ${
+                i === currentSlide
+                  ? 'w-7 h-2 bg-gradient-to-r from-teal-400 to-primary-500 shadow-[0_0_8px_#14b8a6]'
+                  : 'w-2 h-2 bg-slate-600/70 hover:bg-slate-400'
+              }`}
+            />
+          ))}
         </div>
       </section>
 
