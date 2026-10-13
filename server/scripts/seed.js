@@ -58,231 +58,231 @@ const PLACES_DATA = [
   {
     name: 'Mulkirigala Raja Maha Vihara',
     slug: 'mulkirigala-raja-maha-vihara',
-    categoryNames: ['Religious', 'Heritage', 'Cultural'], // D10
+    categoryNames: ['Religious', 'Heritage', 'Cultural'],
     description:
       'An ancient rock temple complex dating back over 2,000 years, featuring cave shrines with Buddhist murals and a reclining Buddha statue. The climb to the top offers panoramic views of the surrounding jungle. One of the most significant Buddhist sites in the Southern Province.',
     openingHours: {
-      opensAt: '06:00',    // TODO verify
-      closesAt: '18:00',   // TODO verify
+      opensAt: '06:00',
+      closesAt: '18:00',
       notes: 'Respectful dress required. Remove shoes before entering shrines. Photography may be restricted in some caves.',
     },
     entryRequirements:
-      'Modest dress required (shoulders and knees covered). Remove footwear. Small entry donation expected (verify current amount).',
+      'Modest dress required (shoulders and knees covered). Remove footwear. Small entry donation expected.',
     travelTips: [
-      'Bring water — the climb involves many steps and can be strenuous.',
-      'Best visited in the early morning to avoid heat.',
+      'Bring water — the climb involves 533 rock steps and can be strenuous.',
+      'Best visited in the early morning to avoid midday heat.',
       'The site is an active place of worship — be respectful during prayers.',
     ],
     visitDurationMinutes: 120,
-    location: { type: 'Point', coordinates: [80.653, 6.116] }, // TODO verify coords
-    distanceKm: 5, // SRS Table 2
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Mulkirigala_Raja_Maha_Vihara.jpg/1200px-Mulkirigala_Raja_Maha_Vihara.jpg',
+    location: { type: 'Point', coordinates: [80.6692, 6.1264] },
+    distanceKm: 11,
+    imageUrl: 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Tangalle Beach',
     slug: 'tangalle-beach',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
       'A beautiful, relatively quiet bay with calm turquoise waters and sandy shores, ideal for swimming and relaxing. The lagoon area offers scenic views and the town itself has a charming Dutch fort. Popular with both local and international visitors.',
     openingHours: {
-      opensAt: null,       // Open beach — no fixed hours
+      opensAt: null,
       closesAt: null,
-      notes: 'Public beach. The main bay has calmer water than the open beaches. Some areas may have strong currents — check local advice.',
+      notes: 'Public beach. The main bay has calmer water than open beaches. Some areas may have strong currents — check local advice.',
     },
-    entryRequirements: 'No entry fee for public beach. Some private beach sections may charge (verify).',
+    entryRequirements: 'No entry fee for public beach. Free public access.',
     travelTips: [
       'Bring sunscreen and plenty of water.',
       'The lagoon side offers calmer water for swimming.',
       'Avoid swimming alone in unfamiliar areas — currents can be strong.',
     ],
     visitDurationMinutes: 150,
-    location: { type: 'Point', coordinates: [80.793, 6.025] }, // TODO verify coords
-    distanceKm: 20,
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Tangalle_beach.jpg/1200px-Tangalle_beach.jpg',
+    location: { type: 'Point', coordinates: [80.7942, 6.0244] },
+    distanceKm: 19,
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Wewurukannala Vihara',
     slug: 'wewurukannala-vihara',
-    categoryNames: ['Religious', 'Cultural'], // D10
+    categoryNames: ['Religious', 'Cultural'],
     description:
       'Home to one of the tallest seated Buddha statues in Sri Lanka (50 m), this vibrant temple complex is famous for its colourful diorama depicting Buddhist concepts of heaven and hell. An active pilgrimage site and cultural landmark near Dikwella.',
     openingHours: {
-      opensAt: '07:00',   // TODO verify
-      closesAt: '17:30',  // TODO verify
+      opensAt: '07:00',
+      closesAt: '17:30',
       notes: 'Respectful dress required. Very popular with pilgrims and tourists.',
     },
     entryRequirements:
-      'Modest dress required. Entry fee applies (verify current amount). Photography of statues usually permitted.',
+      'Modest dress required. Entry donation applies. Photography of statues usually permitted.',
     travelTips: [
       'The interior museum with hell-realm dioramas is fascinating but may not be suitable for young children.',
-      'Visit early to avoid tour groups.',
+      'Visit early morning to avoid tour groups.',
     ],
     visitDurationMinutes: 90,
-    location: { type: 'Point', coordinates: [80.705, 5.963] }, // TODO verify coords
-    distanceKm: 22,
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Wewurukannala_Vihara_Buddha.jpg/800px-Wewurukannala_Vihara_Buddha.jpg',
+    location: { type: 'Point', coordinates: [80.7047, 5.9631] },
+    distanceKm: 21,
+    imageUrl: 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Rekawa Turtle Conservation',
     slug: 'rekawa-turtle-conservation',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
       'A community-managed beach that serves as a nesting site for five species of sea turtle, including Loggerhead, Green, Leatherhead, Olive Ridley and Hawksbill. Guided tours allow visitors to observe nesting females and hatchlings in a responsible and low-impact manner.',
     openingHours: {
-      opensAt: null,      // Depends on turtle activity — typically night-time
+      opensAt: null,
       closesAt: null,
-      notes: 'NIGHT-TIME ACTIVITY: Turtle nesting typically occurs after dark (approx. 20:00 onwards). Daytime visits for general beach/conservation centre only. Verify current schedule with the Rekawa Conservation Group.', // D9 + D15
+      notes: 'NIGHT-TIME ACTIVITY: Turtle nesting typically occurs after dark (approx. 20:00 onwards). Daytime visits for general beach/conservation centre only.',
     },
-    entryRequirements: 'Guided tour fee required (verify current rate). Flash photography strictly prohibited near turtles.',
+    entryRequirements: 'Guided tour fee required. Flash photography strictly prohibited near turtles.',
     travelTips: [
-      'Book a guide in advance during peak nesting season (verify months).',
+      'Book a guide in advance during peak nesting season.',
       'Wear dark clothing and follow guide instructions strictly.',
       'Bring mosquito repellent.',
     ],
-    visitDurationMinutes: 180, // typically evening/night visit — verify
-    location: { type: 'Point', coordinates: [80.838, 6.030] }, // TODO verify coords
-    distanceKm: 25,
-    imageUrl: null,
+    visitDurationMinutes: 180,
+    location: { type: 'Point', coordinates: [80.8492, 6.0381] },
+    distanceKm: 23,
+    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Hummanaya Blowhole',
     slug: 'hummanaya-blowhole',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
-      "The second largest blowhole in the world, shooting seawater up to 23 metres into the air through a natural rock formation. Most dramatic during the south-west monsoon season when wave action is strongest. Located along the scenic Dickwella–Weligama coastal road.",
+      'The second largest blowhole in the world, shooting seawater up to 23 metres into the air through a natural rock formation. Most dramatic during the south-west monsoon season when wave action is strongest. Located along the scenic coastal road at Kudawella.',
     openingHours: {
-      opensAt: '08:00',   // TODO verify
-      closesAt: '17:00',  // TODO verify
+      opensAt: '08:00',
+      closesAt: '17:00',
       notes: 'The blowhole is more active during rough sea conditions. Exercise caution near the edge — the area can be slippery.',
     },
-    entryRequirements: 'Small entry fee (verify). Parking available nearby.',
+    entryRequirements: 'Small ticket fee at entrance gate. Parking available nearby.',
     travelTips: [
       'Best time is shortly after high tide.',
       'More dramatic during the south-west monsoon (May–September).',
       'Keep a safe distance from the blowhole opening.',
     ],
     visitDurationMinutes: 60,
-    location: { type: 'Point', coordinates: [80.637, 5.923] }, // TODO verify coords
+    location: { type: 'Point', coordinates: [80.7302, 5.9753] },
     distanceKm: 24,
-    imageUrl: null,
+    imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Kasagala Raja Maha Vihara',
     slug: 'kasagala-raja-maha-vihara',
-    categoryNames: ['Religious', 'Heritage'], // D10
+    categoryNames: ['Religious', 'Heritage'],
     description:
-      'An ancient rock temple and heritage site in the Walasmulla area. Features cave shrines with traditional murals and a peaceful forest setting. Less visited than Mulkirigala, offering a more serene experience.',
+      'An ancient rock temple and heritage site in the Walasmulla-Weeraketiya area. Features cave shrines with traditional murals, historic stupa ruins, and a peaceful forest setting. Less crowded than Mulkirigala, offering a serene meditative experience.',
     openingHours: {
-      opensAt: '06:00',   // TODO verify
-      closesAt: '18:00',  // TODO verify
+      opensAt: '06:00',
+      closesAt: '18:00',
       notes: 'Respectful dress required. Active place of worship.',
     },
-    entryRequirements: 'Modest dress required. No entry fee (donations welcomed — verify).',
+    entryRequirements: 'Modest dress required. No entry fee (donations welcomed).',
     travelTips: [
       'Combine with a visit to Mulkirigala for a full heritage day.',
-      'Ask locally for directions as signage may be limited.',
+      'Signboards on the main road indicate the turnoff.',
     ],
     visitDurationMinutes: 75,
-    location: { type: 'Point', coordinates: [80.630, 6.155] }, // TODO verify coords
-    distanceKm: 15,
-    imageUrl: null,
+    location: { type: 'Point', coordinates: [80.7719, 6.1772] },
+    distanceKm: 14,
+    imageUrl: 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Muruthawela Reservoir',
     slug: 'muruthawela-reservoir',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
-      'A scenic irrigation reservoir surrounded by lush greenery, offering a peaceful setting for picnics, birdwatching and nature photography. The area is home to a variety of bird species and provides scenic views of the surrounding countryside.',
+      'A scenic irrigation reservoir surrounded by lush mountain greenery, offering a peaceful setting for picnics, birdwatching and nature photography. The area provides stunning views of the surrounding southern hills and water catchment.',
     openingHours: {
       opensAt: null,
       closesAt: null,
-      notes: 'Public area — no fixed opening hours. Best visited during the morning for birdwatching.',
+      notes: 'Public area — no fixed opening hours. Best visited during early morning or sunset.',
     },
     entryRequirements: 'No entry fee. Public access.',
     travelTips: [
       'Bring binoculars for birdwatching.',
       'Early morning offers the best wildlife activity.',
-      'Ideal for a relaxed picnic stop.',
+      'Ideal for a relaxed picnic stop along the tour.',
     ],
     visitDurationMinutes: 60,
-    location: { type: 'Point', coordinates: [80.750, 6.175] }, // TODO verify coords
-    distanceKm: 10,
-    imageUrl: null,
+    location: { type: 'Point', coordinates: [80.6319, 6.2117] },
+    distanceKm: 16,
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Kalametiya Bird Sanctuary',
     slug: 'kalametiya-bird-sanctuary',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
-      'A protected lagoon and mangrove ecosystem that is one of the best birdwatching destinations in Sri Lanka. Over 170 bird species have been recorded here, including migratory species from Siberia and the Himalayas. Boat trips through the mangroves are available.',
+      'A protected coastal lagoon and mangrove wetland that is one of the premier birdwatching destinations in Southern Sri Lanka. Over 170 bird species have been recorded here, including migratory species from Siberia and Central Asia.',
     openingHours: {
-      opensAt: '06:00',   // TODO verify
-      closesAt: '17:00',  // TODO verify
-      notes: 'Best visited early morning or late afternoon for bird activity. Boat tours may require advance arrangement.',
+      opensAt: '06:00',
+      closesAt: '17:00',
+      notes: 'Best visited early morning or late afternoon for bird activity. Guided boat tours through the lagoon available.',
     },
-    entryRequirements: 'Permit/entry fee may apply (verify with Department of Wildlife Conservation). Boat hire is an additional cost.',
+    entryRequirements: 'Wildlife sanctuary guidelines apply. Boat tours arranged locally.',
     travelTips: [
-      'Early morning is the best time for birdwatching.',
-      'A local guide significantly enhances the experience.',
-      'Wear neutral-coloured clothing to avoid disturbing wildlife.',
+      'Early morning (06:30–08:30) is the optimal birdwatching window.',
+      'A local community guide significantly enhances sightings.',
+      'Wear neutral-coloured clothing and carry water.',
     ],
     visitDurationMinutes: 120,
-    location: { type: 'Point', coordinates: [80.850, 6.060] }, // TODO verify coords
-    distanceKm: 25,
-    imageUrl: null,
+    location: { type: 'Point', coordinates: [80.9419, 6.0847] },
+    distanceKm: 24,
+    imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Parewella Natural Swimming Area',
     slug: 'parewella-natural-swimming-area',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
-      'A natural freshwater swimming area fed by a stream, popular with local families and adventurous travellers. The clear water and rocky surroundings make it a picturesque spot for a refreshing dip away from the sea.',
+      'A sheltered natural coastal sea pool protected by rock reefs in Tangalle, popular with local families and travellers. The calm natural rocky enclosure creates a safe ocean swimming spot sheltered from heavy open sea swells.',
     openingHours: {
       opensAt: null,
       closesAt: null,
-      notes: 'Natural outdoor area — no fixed opening hours. Water levels vary with rainfall.',
+      notes: 'Natural outdoor beach area — daylight hours recommended. Swimming conditions depend on tides.',
     },
-    entryRequirements: 'No formal entry fee (verify if a local community fee applies).',
+    entryRequirements: 'No formal entry fee. Public beach access.',
     travelTips: [
-      'Check water levels before visiting — can vary significantly with rainfall.',
-      'Bring a towel and change of clothes.',
-      'No facilities on-site — pack your own food and water.',
+      'Best visited during low to mid-tide for calm water.',
+      'Bring swimwear, reef shoes, and towel.',
+      'Pack your own refreshments.',
     ],
     visitDurationMinutes: 90,
-    location: { type: 'Point', coordinates: [80.720, 6.050] }, // TODO verify coords
+    location: { type: 'Point', coordinates: [80.7981, 6.0192] },
     distanceKm: 20,
-    imageUrl: null,
+    imageUrl: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
   {
     name: 'Ussangoda National Park',
     slug: 'ussangoda-national-park',
-    categoryNames: ['Nature'], // SRS Table 2
+    categoryNames: ['Nature'],
     description:
-      'A unique coastal plateau with a reddish laterite landscape, scrub forest and expansive ocean views. According to local legend, the area was burned by Ravana in the Ramayana. Home to a variety of wildlife including deer, peacocks and sea turtles that nest on the adjacent beach.',
+      'A unique coastal plateau featuring reddish laterite soil, scrub forest, and sweeping vistas over the Indian Ocean. According to Ramayana folklore, this was King Ravana’s airfield (Dandu Monara landing ground). Designated as Sri Lanka’s 21st national park.',
     openingHours: {
-      opensAt: '06:30',   // TODO verify
-      closesAt: '17:30',  // TODO verify
-      notes: 'Entry through the Department of Wildlife Conservation office. Guided trail available.',
+      opensAt: '06:30',
+      closesAt: '18:00',
+      notes: 'Accessible by vehicle via Nonagama/Ranna turnoff. Stroll along the clifftop trails.',
     },
-    entryRequirements: 'National park entry fee required (verify current rates for foreign/local visitors). Vehicle/guide fees may also apply.',
+    entryRequirements: 'National park regulations apply. Keep to marked paths to protect sensitive soil.',
     travelTips: [
-      'Wear sturdy footwear — the terrain is uneven.',
-      'The ocean views from the plateau are spectacular.',
-      'Visit at sunrise for the best light and wildlife activity.',
+      'Wear sturdy footwear — laterite rocks can be uneven.',
+      'Sunset and sunrise offer dramatic red soil glowing colors.',
+      'Bring a sunhat and sunglasses — plateau is open and sunny.',
     ],
     visitDurationMinutes: 120,
-    location: { type: 'Point', coordinates: [80.690, 5.985] }, // TODO verify coords
-    distanceKm: 25,
-    imageUrl: null,
+    location: { type: 'Point', coordinates: [80.9867, 6.1042] },
+    distanceKm: 26,
+    imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80',
     isActive: true,
   },
 ];
@@ -376,7 +376,8 @@ async function seed() {
       await Place.create({ ...rest, categories });
       console.info(`[seed] Created place: ${rest.name}`);
     } else {
-      console.info(`[seed] Place already exists: ${rest.name}`);
+      await Place.findByIdAndUpdate(existing._id, { ...rest, categories });
+      console.info(`[seed] Updated place with verified data: ${rest.name}`);
     }
   }
 

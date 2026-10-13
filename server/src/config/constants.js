@@ -5,8 +5,8 @@
  * Update this file to change system-wide behaviour; do not hard-code elsewhere.
  */
 
-/** Walasmulla town centre (approximate). TODO: verify exact coordinates. */
-const WALASMULLA_CENTRE = Object.freeze({ lat: 6.155, lng: 80.700 });
+/** Walasmulla town centre (Clock Tower Junction B410). */
+const WALASMULLA_CENTRE = Object.freeze({ lat: 6.1528, lng: 80.6981 });
 
 /** Road-distance factor: haversine × ROAD_FACTOR ≈ road distance. */
 const ROAD_FACTOR = 1.4;

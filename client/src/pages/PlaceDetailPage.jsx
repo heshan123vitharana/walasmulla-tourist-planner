@@ -55,7 +55,15 @@ export default function PlaceDetailPage() {
       {/* Hero image */}
       {place.imageUrl ? (
         <div className="h-64 rounded-2xl overflow-hidden mb-6">
-          <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover" />
+          <img
+            src={place.imageUrl}
+            alt={place.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80';
+            }}
+            className="w-full h-full object-cover"
+          />
         </div>
       ) : (
         <div className="h-40 rounded-2xl bg-gradient-to-br from-primary-900/40 to-surface flex items-center justify-center mb-6">
