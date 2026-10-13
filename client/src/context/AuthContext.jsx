@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('wtp_token');
     if (token) {
       api.me()
-        .then(({ user: u }) => setUser(u))
+        .then((u) => setUser(u))          // server returns user object directly
         .catch(() => localStorage.removeItem('wtp_token'))
         .finally(() => setLoading(false));
     } else {
