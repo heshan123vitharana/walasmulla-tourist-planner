@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider }   from './context/AuthContext';
 import { PlanProvider }   from './context/PlanContext';
 import Navbar             from './components/Navbar';
+import Footer             from './components/Footer';
 import PrivateRoute       from './components/PrivateRoute';
 import AdminRoute         from './components/AdminRoute';
 
@@ -23,9 +24,10 @@ export default function App() {
     <AuthProvider>
       <PlanProvider>
         <BrowserRouter>
-          <Navbar />
-          <main>
-            <Routes>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
               {/* Public */}
               <Route path="/"               element={<HomePage />} />
               <Route path="/places"         element={<DirectoryPage />} />
@@ -55,8 +57,10 @@ export default function App() {
               } />
             </Routes>
           </main>
-        </BrowserRouter>
-      </PlanProvider>
-    </AuthProvider>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </PlanProvider>
+  </AuthProvider>
   );
 }

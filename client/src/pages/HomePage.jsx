@@ -79,10 +79,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="text-center py-10 text-slate-600 text-sm mt-10">
-        <p>Walasmulla Local Tourist Day-Visit Planner · ITE2953 Group Project</p>
-      </footer>
+      {/* CTA Banner */}
+      <section className="page-container mt-16 mb-4">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-950 via-surface-card to-teal-950/60 border border-primary-800/40 p-8 sm:p-12 text-center shadow-card">
+          <div className="absolute -top-24 -right-24 w-60 h-60 bg-primary-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative max-w-xl mx-auto space-y-4">
+            <h2 className="text-3xl font-bold text-slate-100">
+              Ready to explore Walasmulla?
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              Add your favorite cultural spots, beaches and viewpoints to your custom day itinerary in seconds.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Link to="/planner" className="btn-primary px-6 py-2.5">
+                <Calendar size={18} /> Open Day Planner
+              </Link>
+              <Link to="/places" className="btn-secondary px-6 py-2.5">
+                Browse 10+ Places
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
