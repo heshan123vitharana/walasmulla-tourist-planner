@@ -600,15 +600,15 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       <section className="page-container py-16">
         <div className="relative overflow-hidden rounded-3xl bg-[#07090e] border border-white/10 p-8 sm:p-10 shadow-2xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-            {/* Left Column: Text & CTAs cleanly aligned to the left */}
-            <div className="flex-1 space-y-4 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-8 lg:gap-12">
+            {/* Left Column: Text & CTAs */}
+            <div className="lg:col-span-6 space-y-4 text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-teal-300 text-xs font-semibold">
                 <Compass size={13} className="animate-spin-slow" />
                 <span>Smart Day Circuit · Walasmulla 25 km</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-100">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100">
                 Ready to explore <span className="text-gradient">Walasmulla?</span>
               </h2>
 
@@ -616,16 +616,19 @@ export default function HomePage() {
                 Add your favorite cultural spots, beaches and viewpoints to your custom day itinerary in seconds. Discover all 10 curated destinations with automatic route optimization.
               </p>
 
-              {/* Quick feature perks */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1 pb-2 text-xs text-slate-300">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-teal-400 font-bold">✓</span> 10 Curated Spots
+              {/* Quick feature perks - neatly grouped close together */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 pb-1 text-xs text-slate-300">
+                <div className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="text-teal-400 font-bold">✓</span>
+                  <span>10 Curated Spots</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-teal-400 font-bold">✓</span> 25 km Circuit
+                <div className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="text-teal-400 font-bold">✓</span>
+                  <span>25 km Circuit</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-teal-400 font-bold">✓</span> Shortest Route Calc
+                <div className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="text-teal-400 font-bold">✓</span>
+                  <span>Shortest Route Calc</span>
                 </div>
               </div>
 
@@ -640,7 +643,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Column: Tour Map Radar Widget */}
-            <div className="w-full lg:w-auto shrink-0 flex flex-col items-center justify-center">
+            <div className="lg:col-span-6 flex flex-col items-center justify-center">
               <TourMapWidget />
               <span className="text-xs text-slate-500 mt-2.5">
                 Click map to expand 3D radar

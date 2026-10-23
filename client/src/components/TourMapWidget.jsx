@@ -396,7 +396,7 @@ export default function TourMapWidget() {
       {/* ─── Large 1:1 Radar Box on Landing Page ─── */}
       <div
         onClick={() => setIsOpen(true)}
-        className="group relative aspect-square w-full max-w-[360px] sm:max-w-[420px] lg:max-w-[460px] cursor-pointer overflow-hidden rounded-3xl border-2 border-primary-500/30 bg-[#040e14] shadow-2xl transition-all duration-300 hover:border-primary-400 hover:shadow-glow hover:scale-[1.01]"
+        className="group relative aspect-square w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] xl:max-w-[540px] cursor-pointer overflow-hidden rounded-3xl border-2 border-primary-500/30 bg-[#040e14] shadow-2xl transition-all duration-300 hover:border-primary-400 hover:shadow-glow hover:scale-[1.01]"
         title="Click to expand 3D Interactive Map"
       >
         {/* Subtle grid background */}
@@ -459,15 +459,12 @@ export default function TourMapWidget() {
               <div
                 className={`flex items-center justify-center rounded-full transition-all ${
                   isHub
-                    ? 'w-5 h-5 bg-teal-400 text-[11px] text-slate-950 font-bold shadow-[0_0_12px_#2dd4bf]'
+                    ? 'w-5 h-5 bg-teal-400 text-[11px] text-slate-950 font-bold shadow-[0_0_14px_#2dd4bf]'
                     : 'w-3 h-3 bg-slate-900 border-2 border-teal-400/90 shadow-md'
                 }`}
               >
                 {isHub && '●'}
               </div>
-              <span className="text-[10px] text-slate-300 font-medium whitespace-nowrap absolute top-full left-1/2 -translate-x-1/2 mt-1 px-1.5 py-0.5 rounded bg-slate-950/80 border border-white/10 hidden sm:inline-block shadow-sm">
-                {d.name.split(' ')[0]}
-              </span>
             </div>
           );
         })}
