@@ -121,6 +121,7 @@ const FAQS = [
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeDestIdx, setActiveDestIdx] = useState(0);
+  const [isDestPaused, setIsDestPaused] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
 
   // Auto-advance hero slideshow every 5.5 seconds
@@ -130,6 +131,15 @@ export default function HomePage() {
     }, 5500);
     return () => clearInterval(timer);
   }, []);
+
+  // Auto-advance destination showcase every 4 seconds (auto-loop)
+  useEffect(() => {
+    if (isDestPaused) return;
+    const timer = setInterval(() => {
+      setActiveDestIdx((prev) => (prev + 1) % SHOWCASE_DESTINATIONS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isDestPaused]);
 
   const activeDestination = SHOWCASE_DESTINATIONS[activeDestIdx];
 
@@ -165,11 +175,6 @@ export default function HomePage() {
 
         {/* Hero Text Content */}
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 pt-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-teal-300 text-xs sm:text-sm font-medium shadow-lg backdrop-blur-md animate-fade-in">
-            <Sparkles size={14} className="text-teal-400" />
-            <span>AI-Powered Southern Day Tour Circuits</span>
-          </div>
-
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-xl text-white leading-[1.1]">
             Your Smart Day Planner with{' '}
             <span className="text-gradient">One-Click Routing</span>
@@ -191,93 +196,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ─── FLOATING TABLET DEVICE MOCKUP ─── */}
-        <div className="relative z-10 w-full max-w-4xl mt-12 sm:mt-16 px-2 sm:px-6">
-          <div className="relative rounded-3xl p-3 sm:p-4 bg-gradient-to-b from-white/10 to-white/5 border border-white/15 shadow-2xl backdrop-blur-2xl">
-            {/* Tablet Ambient Glow Bloom */}
-            <div className="glow-bloom w-96 h-96 -top-20 -left-20 bg-teal-500/10" />
-            <div className="glow-bloom w-96 h-96 -bottom-20 -right-20 bg-primary-600/10" />
 
-            {/* Inner Tablet Screen */}
-            <div className="relative rounded-2xl overflow-hidden bg-[#07090e] border border-white/10 shadow-inner">
-              {/* Tablet Top App Bar */}
-              <div className="px-4 py-3 bg-[#0a0d14] border-b border-white/10 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-                  <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                  <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-                  <span className="text-xs font-mono text-slate-400 ml-2 hidden sm:inline">
-                    Walasmulla Hub · Nearest-Neighbor Router v2.4
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-teal-300 font-medium">
-                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Optimized Loop · 54 km</span>
-                </div>
-              </div>
-
-              {/* Tablet Screen Body: Visual Itinerary Timeline Preview */}
-              <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Stop 1 */}
-                <div className="p-4 rounded-xl bg-[#0b0e15] border border-white/10 hover:border-teal-500/40 transition-all">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-teal-300 font-mono font-bold">STOP 01</span>
-                    <span className="flex items-center gap-1 text-slate-300"><Clock size={12} /> 09:00 AM</span>
-                  </div>
-                  <h4 className="font-semibold text-slate-100 text-sm mb-1">Mulkirigala Rock Temple</h4>
-                  <p className="text-xs text-slate-400 mb-3">Ancient 7-terrace cave monastery and panoramic summit view.</p>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-white/10">
-                    <span className="text-teal-400 font-mono">11 km from hub</span>
-                    <span>2.0 hrs stay</span>
-                  </div>
-                </div>
-
-                {/* Stop 2 */}
-                <div className="p-4 rounded-xl bg-[#0b0e15] border border-white/10 hover:border-teal-500/40 transition-all">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-teal-300 font-mono font-bold">STOP 02</span>
-                    <span className="flex items-center gap-1 text-slate-300"><Clock size={12} /> 12:15 PM</span>
-                  </div>
-                  <h4 className="font-semibold text-slate-100 text-sm mb-1">Tangalle Sandy Beach</h4>
-                  <p className="text-xs text-slate-400 mb-3">Palm-fringed golden shore, coconut refreshes and seaside walk.</p>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-white/10">
-                    <span className="text-teal-400 font-mono">19 km distance</span>
-                    <span>2.5 hrs stay</span>
-                  </div>
-                </div>
-
-                {/* Stop 3 */}
-                <div className="p-4 rounded-xl bg-[#0b0e15] border border-white/10 hover:border-teal-500/40 transition-all">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-teal-300 font-mono font-bold">STOP 03</span>
-                    <span className="flex items-center gap-1 text-slate-300"><Clock size={12} /> 03:30 PM</span>
-                  </div>
-                  <h4 className="font-semibold text-slate-100 text-sm mb-1">Hummanaya Blowhole</h4>
-                  <p className="text-xs text-slate-400 mb-3">Natural sea geyser rock formation shooting ocean sprays 30m.</p>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-white/10">
-                    <span className="text-teal-400 font-mono">24 km distance</span>
-                    <span>1.5 hrs stay</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tablet Bottom Summary Strip */}
-              <div className="px-4 py-3 bg-[#05070a] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2 text-slate-300">
-                  <CheckCircle2 size={15} className="text-emerald-400" />
-                  <span>Daylight Schedule: Complete circuit return to Walasmulla by 05:45 PM</span>
-                </div>
-                <Link
-                  to="/planner"
-                  className="px-3.5 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-500 text-white font-medium flex items-center gap-1.5 transition-colors shadow-glow"
-                >
-                  <span>Customize Stops</span>
-                  <ArrowRight size={13} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Hero Slideshow Bullet Indicators */}
         <div className="relative z-10 flex items-center justify-center gap-2 mt-8">
@@ -564,17 +483,32 @@ export default function HomePage() {
         </div>
 
         {/* Grand Showcase Card */}
-        <div className="bento-card overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[460px]">
-            {/* Left Image Showcase */}
-            <div className="lg:col-span-7 relative min-h-[300px] lg:min-h-[460px] overflow-hidden">
-              <img
-                src={activeDestination.image}
-                alt={activeDestination.name}
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#07090e]" />
-              <div className="absolute top-4 left-4 flex gap-2">
+        <div
+          className="bento-card overflow-hidden lg:h-[480px]"
+          onMouseEnter={() => setIsDestPaused(true)}
+          onMouseLeave={() => setIsDestPaused(false)}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 h-full">
+            {/* Left Image Showcase - strictly locked aspect/dimensions, cross-faded */}
+            <div className="lg:col-span-7 relative h-[280px] sm:h-[360px] lg:h-full overflow-hidden bg-black/50">
+              {SHOWCASE_DESTINATIONS.map((dest, idx) => (
+                <div
+                  key={dest.id}
+                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                    idx === activeDestIdx
+                      ? 'opacity-100 z-10'
+                      : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              ))}
+              <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#07090e]" />
+              <div className="absolute top-4 left-4 z-30 flex gap-2">
                 <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-xs font-semibold text-teal-300">
                   {activeDestination.category}
                 </span>
@@ -584,19 +518,19 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Details Panel */}
-            <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between bg-[#07090e] border-t lg:border-t-0 lg:border-l border-white/10">
+            {/* Right Details Panel - locked height, neat spacing */}
+            <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between bg-[#07090e] border-t lg:border-t-0 lg:border-l border-white/10 h-full overflow-hidden">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-xs text-slate-400">
                   <Clock size={14} className="text-teal-400" />
                   <span>Suggested Stay: {activeDestination.duration}</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-100">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-100 transition-all duration-300">
                   {activeDestination.name}
                 </h3>
 
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <p className="text-slate-300 text-sm leading-relaxed min-h-[4.5rem]">
                   {activeDestination.description}
                 </p>
 
@@ -632,14 +566,18 @@ export default function HomePage() {
         </div>
 
         {/* Thumbnail Selector Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
+        <div
+          className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4"
+          onMouseEnter={() => setIsDestPaused(true)}
+          onMouseLeave={() => setIsDestPaused(false)}
+        >
           {SHOWCASE_DESTINATIONS.map((dest, idx) => (
             <button
               key={dest.id}
               onClick={() => setActiveDestIdx(idx)}
-              className={`p-2.5 rounded-2xl border text-left transition-all duration-300 flex items-center gap-3 ${
+              className={`p-2.5 rounded-2xl border text-left transition-all duration-300 flex items-center gap-3 relative overflow-hidden ${
                 idx === activeDestIdx
-                  ? 'bg-white/10 border-teal-500 shadow-glow'
+                  ? 'bg-teal-500/10 border-teal-500 shadow-glow'
                   : 'bg-[#07090e] border-white/10 hover:border-slate-500'
               }`}
             >
