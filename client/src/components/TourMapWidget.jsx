@@ -115,14 +115,19 @@ export default function TourMapWidget() {
   const carMarkerRef = useRef(null);
   const animFrameRef = useRef(null);
 
-  // Initialize Mini Map with real dark map tiles
+  // Initialize Mini Map with real dark map tiles safely
   useEffect(() => {
-    if (!miniMapContainerRef.current || miniMapInstanceRef.current) return;
+    const el = miniMapContainerRef.current;
+    if (!el) return;
 
-    const initTimer = setTimeout(() => {
-      if (!miniMapContainerRef.current) return;
+    let map = null;
 
-      const map = L.map(miniMapContainerRef.current, {
+    try {
+      if (el._leaflet_id) {
+        delete el._leaflet_id;
+      }
+
+      map = L.map(el, {
         center: [6.09, 80.81],
         zoom: 11,
         minZoom: 10,
@@ -216,14 +221,24 @@ export default function TourMapWidget() {
         interactive: false,
       }).addTo(map);
 
-      map.invalidateSize();
-    }, 120);
+      setTimeout(() => {
+        try {
+          map.invalidateSize();
+        } catch (_) {}
+      }, 200);
+    } catch (err) {
+      console.warn('Mini map init error handled safely:', err);
+    }
 
     return () => {
-      clearTimeout(initTimer);
       if (miniMapInstanceRef.current) {
-        miniMapInstanceRef.current.remove();
+        try {
+          miniMapInstanceRef.current.remove();
+        } catch (_) {}
         miniMapInstanceRef.current = null;
+      }
+      if (el) {
+        delete el._leaflet_id;
       }
     };
   }, []);
@@ -238,9 +253,11 @@ export default function TourMapWidget() {
       lastTime = currentTime;
 
       if (miniCarMarkerRef.current && DENSE_CIRCUIT.length > 0) {
-        index = (index + delta * 22) % DENSE_CIRCUIT.length;
-        const pt = DENSE_CIRCUIT[Math.floor(index)];
-        miniCarMarkerRef.current.setLatLng(pt);
+        try {
+          index = (index + delta * 22) % DENSE_CIRCUIT.length;
+          const pt = DENSE_CIRCUIT[Math.floor(index)];
+          miniCarMarkerRef.current.setLatLng(pt);
+        } catch (_) {}
       }
       miniAnimFrameRef.current = requestAnimationFrame(loop);
     };

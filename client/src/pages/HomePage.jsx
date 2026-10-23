@@ -3,12 +3,12 @@
  * Designed with modern dark aesthetics, bento storytelling, interactive destination showcase,
  * floating tablet mockups, collapsible FAQ accordion, and 3D radar map integration.
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Compass, MapPin, Calendar, Clock, ChevronRight, ChevronDown,
   Navigation, Sparkles, Shield, Waves, Mountain, Feather, CheckCircle2,
-  ExternalLink, Layers, ArrowRight, Play
+  ExternalLink, Layers, ArrowRight, Play, ArrowUp
 } from 'lucide-react';
 import TourMapWidget from '../components/TourMapWidget';
 
@@ -123,6 +123,14 @@ export default function HomePage() {
   const [activeDestIdx, setActiveDestIdx] = useState(0);
   const [isDestPaused, setIsDestPaused] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Show scroll-to-top button after scrolling 400px
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Auto-advance hero slideshow every 5.5 seconds
   useEffect(() => {
@@ -774,6 +782,31 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Floating Scroll-to-Top Button ── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Scroll to top"
+        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center
+          w-12 h-12 rounded-full
+          bg-gradient-to-br from-primary to-accent
+          shadow-lg shadow-primary/30
+          border border-white/10
+          transition-all duration-500 ease-out
+          hover:scale-110 hover:shadow-xl hover:shadow-primary/40
+          active:scale-95
+          ${showScrollTop
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 translate-y-6 pointer-events-none'
+          }`}
+      >
+        <ArrowUp
+          size={22}
+          className="text-white transition-transform duration-300 group-hover:-translate-y-0.5"
+        />
+        {/* Pulse ring */}
+        <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-30 pointer-events-none" />
+      </button>
 
     </div>
   );
