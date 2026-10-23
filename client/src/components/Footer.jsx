@@ -3,7 +3,7 @@
  */
 import { Link } from 'react-router-dom';
 import {
-  Compass, MapPin, Calendar, Heart, Shield, Clock,
+  Compass, MapPin, Calendar, Shield, Clock,
   ExternalLink, Sparkles, Navigation, PhoneCall
 } from 'lucide-react';
 
@@ -112,19 +112,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom divider and copyright */}
-        <div className="mt-14 pt-8 border-t border-surface-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="mt-14 pt-8 border-t border-surface-border/50 flex flex-col items-center justify-center text-center text-xs text-slate-500">
           <p>
             © {new Date().getFullYear()} Walasmulla Tourist Day-Visit Planner · Built for Southern Sri Lanka Tourism.
           </p>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1.5 text-slate-400">
-              BIT / ITE2953 Programming Group Project
-            </span>
-            <span className="text-slate-600">·</span>
-            <span className="inline-flex items-center gap-1 text-slate-400">
-              Made with <Heart size={12} className="text-rose-500 fill-rose-500" />
-            </span>
-          </div>
         </div>
 
         {/* Giant Watermark Typography matching Reference UI - 100% Vector Responsive */}
