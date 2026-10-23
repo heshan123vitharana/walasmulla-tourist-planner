@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.15fr_0.7fr_1fr_1.15fr] gap-10 lg:gap-8">
           
           {/* Col 1: Brand & About */}
           <div className="space-y-4">
@@ -68,7 +68,7 @@ export default function Footer() {
             <h4 className="text-slate-200 font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
               <Sparkles size={14} className="text-primary-400" /> Must-Visit Spots
             </h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-400 max-w-xs">
               <li className="hover:text-slate-200 transition-colors flex items-center justify-between">
                 <span>Mulkirigala Rock Temple</span>
                 <span className="text-xs text-primary-400/80 font-mono">11 km</span>
