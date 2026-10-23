@@ -102,8 +102,11 @@ export default function TourMapWidget() {
   const [nearestSpot, setNearestSpot] = useState(REAL_DESTINATIONS[0]);
   const [currentSpeedKmh, setCurrentSpeedKmh] = useState(42);
 
-  // Mini preview car state (for 1:1 thumbnail)
-  const [miniProgress, setMiniProgress] = useState(0);
+  // Mini map refs for landing page preview
+  const miniMapContainerRef = useRef(null);
+  const miniMapInstanceRef = useRef(null);
+  const miniCarMarkerRef = useRef(null);
+  const miniAnimFrameRef = useRef(null);
 
   // Modal map refs
   const mapContainerRef = useRef(null);
@@ -112,12 +115,143 @@ export default function TourMapWidget() {
   const carMarkerRef = useRef(null);
   const animFrameRef = useRef(null);
 
-  // Thumbnail animation loop
+  // Initialize Mini Map with real dark map tiles
   useEffect(() => {
-    let timer = setInterval(() => {
-      setMiniProgress((p) => (p + 1) % DENSE_CIRCUIT.length);
-    }, 45);
-    return () => clearInterval(timer);
+    if (!miniMapContainerRef.current || miniMapInstanceRef.current) return;
+
+    const initTimer = setTimeout(() => {
+      if (!miniMapContainerRef.current) return;
+
+      const map = L.map(miniMapContainerRef.current, {
+        center: [6.09, 80.81],
+        zoom: 11,
+        minZoom: 10,
+        maxZoom: 14,
+        zoomControl: false,
+        attributionControl: false,
+        dragging: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+      });
+      miniMapInstanceRef.current = map;
+
+      // Real Dark Map Tiles
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        className: 'leaflet-dark-tiles',
+      }).addTo(map);
+
+      // Fit bounds to Southern Sri Lanka circuit
+      map.fitBounds([
+        [5.95, 80.61],
+        [6.23, 81.01]
+      ], { padding: [24, 24] });
+
+      // Circuit polyline - glow
+      L.polyline(ROAD_CIRCUIT_WAYPOINTS, {
+        color: '#0d9488',
+        weight: 7,
+        opacity: 0.45,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map);
+
+      // Circuit polyline - primary dashed
+      L.polyline(ROAD_CIRCUIT_WAYPOINTS, {
+        color: '#14b8a6',
+        weight: 3,
+        dashArray: '6 8',
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map);
+
+      // Real destination markers on the mini map
+      REAL_DESTINATIONS.forEach((dest) => {
+        const isHub = dest.id === 'walasmulla';
+        const iconHtml = `
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div style="
+              width: ${isHub ? '16px' : '10px'};
+              height: ${isHub ? '16px' : '10px'};
+              border-radius: 9999px;
+              background: ${isHub ? '#2dd4bf' : '#0f172a'};
+              border: 2px solid ${isHub ? '#ffffff' : '#2dd4bf'};
+              box-shadow: 0 0 10px ${isHub ? '#2dd4bf' : 'rgba(45, 212, 191, 0.6)'};
+            "></div>
+          </div>
+        `;
+        L.marker([dest.lat, dest.lng], {
+          icon: L.divIcon({
+            html: iconHtml,
+            className: 'mini-dest-pin',
+            iconSize: [isHub ? 16 : 10, isHub ? 16 : 10],
+            iconAnchor: [isHub ? 8 : 5, isHub ? 8 : 5],
+          }),
+          interactive: false,
+        }).addTo(map);
+      });
+
+      // Animated car marker on mini map
+      const carHtml = `
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+          <span style="position:absolute;inset:-6px;border-radius:9999px;background:rgba(45,212,191,0.5);animation:ping 1.5s cubic-bezier(0,0,0.2,1) infinite;"></span>
+          <div style="width:24px;height:24px;border-radius:9999px;background:linear-gradient(135deg,#fde047,#2dd4bf);border:2px solid #ffffff;box-shadow:0 0 14px #38bdf8;display:flex;align-items:center;justify-content:center;font-size:12px;">
+            🚗
+          </div>
+        </div>
+      `;
+
+      miniCarMarkerRef.current = L.marker(DENSE_CIRCUIT[0], {
+        icon: L.divIcon({
+          html: carHtml,
+          className: 'mini-car-marker',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        }),
+        zIndexOffset: 1000,
+        interactive: false,
+      }).addTo(map);
+
+      map.invalidateSize();
+    }, 120);
+
+    return () => {
+      clearTimeout(initTimer);
+      if (miniMapInstanceRef.current) {
+        miniMapInstanceRef.current.remove();
+        miniMapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Mini Map 60fps Car Animation
+  useEffect(() => {
+    let index = 0;
+    let lastTime = performance.now();
+
+    const loop = (currentTime) => {
+      const delta = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+
+      if (miniCarMarkerRef.current && DENSE_CIRCUIT.length > 0) {
+        index = (index + delta * 22) % DENSE_CIRCUIT.length;
+        const pt = DENSE_CIRCUIT[Math.floor(index)];
+        miniCarMarkerRef.current.setLatLng(pt);
+      }
+      miniAnimFrameRef.current = requestAnimationFrame(loop);
+    };
+
+    miniAnimFrameRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      if (miniAnimFrameRef.current) {
+        cancelAnimationFrame(miniAnimFrameRef.current);
+      }
+    };
   }, []);
 
   // Keyboard escape listener to close modal
@@ -379,117 +513,40 @@ export default function TourMapWidget() {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [isOpen, isPlaying, speed]);
 
-  // Normalized 1:1 preview coordinates calculation
-  const currentMiniPoint = DENSE_CIRCUIT[miniProgress] || DENSE_CIRCUIT[0];
-  // Coordinates mapping bounds: lat [5.95 to 6.22], lng [80.62 to 81.00]
-  const minLat = 5.95, maxLat = 6.23;
-  const minLng = 80.61, maxLng = 81.01;
-  const mapTo100 = (lat, lng) => ({
-    x: ((lng - minLng) / (maxLng - minLng)) * 100,
-    y: (1 - (lat - minLat) / (maxLat - minLat)) * 100,
-  });
 
-  const miniCarPos = mapTo100(currentMiniPoint[0], currentMiniPoint[1]);
 
   return (
     <>
-      {/* ─── Large 1:1 Radar Box on Landing Page ─── */}
+      {/* ─── Large 1:1 Radar Box on Landing Page with Real Map Background ─── */}
       <div
         onClick={() => setIsOpen(true)}
         className="group relative aspect-square w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] xl:max-w-[540px] cursor-pointer overflow-hidden rounded-3xl border-2 border-primary-500/30 bg-[#040e14] shadow-2xl transition-all duration-300 hover:border-primary-400 hover:shadow-glow hover:scale-[1.01]"
         title="Click to expand 3D Interactive Map"
       >
-        {/* Subtle grid background */}
-        <div
-          className="absolute inset-0 opacity-25"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(20, 184, 166, 0.2) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(20, 184, 166, 0.2) 1px, transparent 1px)
-            `,
-            backgroundSize: '32px 32px',
-          }}
-        />
+        {/* Real Leaflet Dark Map Background Layer */}
+        <div ref={miniMapContainerRef} className="absolute inset-0 z-0 w-full h-full pointer-events-none" />
 
-        {/* Radar concentric circles (scaled proportionally to enlarged size) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%] h-[82%] rounded-full border border-teal-500/20 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[58%] h-[58%] rounded-full border border-teal-500/25 border-dashed pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32%] h-[32%] rounded-full border border-teal-500/15 pointer-events-none" />
+        {/* Ambient Radar Glow & Dark Vignette */}
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-slate-950/75 via-transparent to-slate-950/50" />
+        <div className="absolute inset-0 z-10 pointer-events-none rounded-3xl shadow-[inset_0_0_50px_rgba(4,14,20,0.85)]" />
+
+        {/* Radar concentric circles on top of Real Map */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%] h-[82%] rounded-full border border-teal-400/25 pointer-events-none z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[58%] h-[58%] rounded-full border border-teal-400/30 border-dashed pointer-events-none z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32%] h-[32%] rounded-full border border-teal-400/20 pointer-events-none z-10" />
+
         {/* Radar crosshairs */}
-        <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-teal-500/10 pointer-events-none" />
-        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-teal-500/10 pointer-events-none" />
-
-        {/* Circuit SVG Lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          <polyline
-            points={ROAD_CIRCUIT_WAYPOINTS.map(([lat, lng]) => {
-              const p = mapTo100(lat, lng);
-              return `${p.x}%,${p.y}%`;
-            }).join(' ')}
-            fill="none"
-            stroke="#0d9488"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.4"
-          />
-          <polyline
-            points={ROAD_CIRCUIT_WAYPOINTS.map(([lat, lng]) => {
-              const p = mapTo100(lat, lng);
-              return `${p.x}%,${p.y}%`;
-            }).join(' ')}
-            fill="none"
-            stroke="#14b8a6"
-            strokeWidth="2.2"
-            strokeDasharray="5 5"
-            className="animate-pulse"
-          />
-        </svg>
-
-        {/* Key Locations Dots */}
-        {REAL_DESTINATIONS.map((d) => {
-          const pos = mapTo100(d.lat, d.lng);
-          const isHub = d.id === 'walasmulla';
-          return (
-            <div
-              key={d.id}
-              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            >
-              <div
-                className={`flex items-center justify-center rounded-full transition-all ${
-                  isHub
-                    ? 'w-5 h-5 bg-teal-400 text-[11px] text-slate-950 font-bold shadow-[0_0_14px_#2dd4bf]'
-                    : 'w-3 h-3 bg-slate-900 border-2 border-teal-400/90 shadow-md'
-                }`}
-              >
-                {isHub && '●'}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Animated Moving Car Dot with Heading Beacon */}
-        <div
-          style={{ left: `${miniCarPos.x}%`, top: `${miniCarPos.y}%` }}
-          className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-75 pointer-events-none"
-        >
-          <div className="relative flex items-center justify-center">
-            <span className="absolute -inset-2.5 rounded-full bg-teal-400/40 animate-ping" />
-            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-amber-300 to-teal-400 border border-white shadow-[0_0_14px_#38bdf8] flex items-center justify-center text-[10px]">
-              🚗
-            </div>
-          </div>
-        </div>
+        <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-teal-400/20 pointer-events-none z-10" />
+        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-teal-400/20 pointer-events-none z-10" />
 
         {/* Top Floating Badge */}
-        <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/85 border border-teal-500/40 text-xs font-semibold text-teal-300 backdrop-blur-md shadow-lg">
+        <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/90 border border-teal-500/40 text-xs font-semibold text-teal-300 backdrop-blur-md shadow-lg">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>3D Live Circuit</span>
         </div>
 
         {/* Bottom Expand Prompt Overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-3.5 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent flex items-center justify-between text-xs text-slate-300 group-hover:text-teal-300 transition-colors">
+        <div className="absolute inset-x-0 bottom-0 z-20 p-3.5 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent flex items-center justify-between text-xs text-slate-300 group-hover:text-teal-300 transition-colors">
           <span className="text-xs font-medium flex items-center gap-1.5">
             <Compass size={15} className="text-teal-400 animate-spin-slow" />
             Click to view full 3D radar
