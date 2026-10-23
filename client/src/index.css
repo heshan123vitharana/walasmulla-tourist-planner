@@ -156,8 +156,7 @@
 
 /* Perspective wrapper for child 3D transforms */
 .reveal-perspective {
-  perspective: 1200px;
-  perspective-origin: 50% 50%;
+  /* Note: individual .reveal-3d variants define their own perspective() in transform to prevent breaking position:fixed children */
 }
 
 /* Base hidden state — shared by all reveal variants */

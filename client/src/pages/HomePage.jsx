@@ -125,9 +125,12 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Show scroll-to-top button after scrolling 400px
+  // Show scroll-to-top button after scrolling past 300px
   useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -175,7 +178,8 @@ export default function HomePage() {
   const activeDestination = SHOWCASE_DESTINATIONS[activeDestIdx];
 
   return (
-    <div ref={pageRef} className="relative overflow-hidden bg-[#050608] reveal-perspective">
+    <>
+      <div ref={pageRef} className="relative overflow-hidden bg-[#050608]">
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 1. HERO SECTION WITH 4K SLIDESHOW & FLOATING TABLET MOCKUP  */}
       {/* ─────────────────────────────────────────────────────────── */}
@@ -806,17 +810,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Floating Scroll-to-Top Button ── */}
+      </div>
+
+      {/* ── Truly Fixed Floating Scroll-to-Top Button ── */}
       <button
+        type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
-        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center
+        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9999] group flex items-center justify-center
           w-12 h-12 rounded-full
           bg-gradient-to-br from-primary to-accent
-          shadow-lg shadow-primary/30
-          border border-white/10
-          transition-all duration-500 ease-out
-          hover:scale-110 hover:shadow-xl hover:shadow-primary/40
+          shadow-xl shadow-primary/30
+          border border-white/20
+          backdrop-blur-md
+          transition-all duration-300 ease-out
+          hover:scale-110 hover:shadow-2xl hover:shadow-primary/50
           active:scale-95
           ${showScrollTop
             ? 'opacity-100 translate-y-0 pointer-events-auto'
@@ -830,7 +838,6 @@ export default function HomePage() {
         {/* Pulse ring */}
         <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-30 pointer-events-none" />
       </button>
-
-    </div>
+    </>
   );
 }
