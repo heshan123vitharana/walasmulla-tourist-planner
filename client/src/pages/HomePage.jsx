@@ -639,10 +639,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: 1:1 Compact Tour Map Widget */}
-            <div className="shrink-0 flex flex-col items-center">
+            {/* Right Column: Tour Map Radar Widget */}
+            <div className="w-full lg:w-auto shrink-0 flex flex-col items-center justify-center">
               <TourMapWidget />
-              <span className="text-[11px] text-slate-500 mt-2">
+              <span className="text-xs text-slate-500 mt-2.5">
                 Click map to expand 3D radar
               </span>
             </div>
@@ -698,32 +698,73 @@ export default function HomePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────── */}
-      {/* 7. PANORAMIC BOTTOM SCENIC CTA BANNER                       */}
+      {/* 7. CALL TO ACTION (MATCHING "HOW IT WORKS" BENTO AESTHETIC) */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container my-16">
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 p-10 sm:p-16 text-center shadow-2xl">
-          {/* Scenic Background */}
-          <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=85"
-            alt="Scenic Southern Shore"
-            className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+      <section className="page-container py-16">
+        <div className="bento-card relative overflow-hidden rounded-3xl p-10 sm:p-16 text-center shadow-2xl border border-white/10 bg-[#07090e]">
+          {/* Subtle Cyber Radar Grid Overlay */}
+          <div
+            className="absolute inset-0 opacity-15 pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(20, 184, 166, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(20, 184, 166, 0.2) 1px, transparent 1px)
+              `,
+              backgroundSize: '36px 36px',
+            }}
           />
-          {/* Deep Dark Wash Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/70" />
-          <div className="glow-bloom w-96 h-96 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-teal-500/10" />
 
-          <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
-              Partner with Your Tour Today
+          {/* Dual Ambient Glow Blooms matching Bento theme */}
+          <div className="glow-bloom w-96 h-96 -top-24 -left-24 bg-teal-500/15 pointer-events-none" />
+          <div className="glow-bloom w-96 h-96 -bottom-24 -right-24 bg-primary-600/15 pointer-events-none" />
+
+          <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+            {/* Pill Tag */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-950/80 border border-primary-800/40 text-primary-300 text-xs font-semibold uppercase tracking-wider">
+              <Compass size={14} className="animate-spin-slow text-primary-400" />
+              <span>Start Your Journey</span>
+            </div>
+
+            {/* Heading with Brand Gradient */}
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-100 tracking-tight leading-tight">
+              Partner with <span className="text-gradient">Your Tour Today</span>
             </h2>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+
+            {/* Subtext */}
+            <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
               Experience the best of Southern Sri Lanka with zero stress. Build your tailored day circuit, track mileage, and preserve every memory.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
-              <Link to="/planner" className="btn-primary text-base px-8 py-3.5 shadow-glow rounded-xl font-semibold">
-                Launch Day Planner
+
+            {/* Feature Pills Strip matching How It Works */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs text-slate-300">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <CheckCircle2 size={13} className="text-teal-400" />
+                <span>10 Verified Stops</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <CheckCircle2 size={13} className="text-teal-400" />
+                <span>25 km Circuit Boundary</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <CheckCircle2 size={13} className="text-teal-400" />
+                <span>Shortest Route Calculation</span>
+              </div>
+            </div>
+
+            {/* CTA Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3.5 justify-center items-center pt-3">
+              <Link
+                to="/planner"
+                className="btn-primary text-base px-8 py-3.5 shadow-glow rounded-xl font-semibold flex items-center gap-2"
+              >
+                <Calendar size={18} />
+                <span>Launch Day Planner</span>
+                <ChevronRight size={16} />
               </Link>
-              <Link to="/register" className="btn-secondary text-base px-8 py-3.5 bg-white/5 border-white/10 hover:bg-white/10 rounded-xl font-semibold">
+              <Link
+                to="/register"
+                className="btn-secondary text-base px-8 py-3.5 bg-white/5 border-white/15 hover:bg-white/10 rounded-xl font-semibold transition-all"
+              >
                 Create Free Account
               </Link>
             </div>

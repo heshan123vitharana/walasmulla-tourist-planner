@@ -393,10 +393,10 @@ export default function TourMapWidget() {
 
   return (
     <>
-      {/* ─── Compact 1:1 Square Box on Landing Page ─── */}
+      {/* ─── Large 1:1 Radar Box on Landing Page ─── */}
       <div
         onClick={() => setIsOpen(true)}
-        className="group relative aspect-square w-full max-w-[240px] sm:max-w-[270px] cursor-pointer overflow-hidden rounded-2xl border-2 border-primary-500/30 bg-[#040e14] shadow-card transition-all duration-300 hover:border-primary-400 hover:shadow-glow hover:scale-[1.02]"
+        className="group relative aspect-square w-full max-w-[360px] sm:max-w-[420px] lg:max-w-[460px] cursor-pointer overflow-hidden rounded-3xl border-2 border-primary-500/30 bg-[#040e14] shadow-2xl transition-all duration-300 hover:border-primary-400 hover:shadow-glow hover:scale-[1.01]"
         title="Click to expand 3D Interactive Map"
       >
         {/* Subtle grid background */}
@@ -407,13 +407,17 @@ export default function TourMapWidget() {
               linear-gradient(to right, rgba(20, 184, 166, 0.2) 1px, transparent 1px),
               linear-gradient(to bottom, rgba(20, 184, 166, 0.2) 1px, transparent 1px)
             `,
-            backgroundSize: '24px 24px',
+            backgroundSize: '32px 32px',
           }}
         />
 
-        {/* Radar concentric circles */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full border border-teal-500/20 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border border-teal-500/25 border-dashed pointer-events-none" />
+        {/* Radar concentric circles (scaled proportionally to enlarged size) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%] h-[82%] rounded-full border border-teal-500/20 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[58%] h-[58%] rounded-full border border-teal-500/25 border-dashed pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32%] h-[32%] rounded-full border border-teal-500/15 pointer-events-none" />
+        {/* Radar crosshairs */}
+        <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-teal-500/10 pointer-events-none" />
+        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-teal-500/10 pointer-events-none" />
 
         {/* Circuit SVG Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
@@ -424,7 +428,7 @@ export default function TourMapWidget() {
             }).join(' ')}
             fill="none"
             stroke="#0d9488"
-            strokeWidth="3.5"
+            strokeWidth="4"
             strokeLinecap="round"
             strokeLinejoin="round"
             opacity="0.4"
@@ -436,8 +440,8 @@ export default function TourMapWidget() {
             }).join(' ')}
             fill="none"
             stroke="#14b8a6"
-            strokeWidth="1.8"
-            strokeDasharray="4 4"
+            strokeWidth="2.2"
+            strokeDasharray="5 5"
             className="animate-pulse"
           />
         </svg>
@@ -455,12 +459,15 @@ export default function TourMapWidget() {
               <div
                 className={`flex items-center justify-center rounded-full transition-all ${
                   isHub
-                    ? 'w-4 h-4 bg-teal-400 text-[10px] text-slate-950 font-bold shadow-[0_0_8px_#2dd4bf]'
-                    : 'w-2.5 h-2.5 bg-slate-800 border border-teal-400/80 shadow-sm'
+                    ? 'w-5 h-5 bg-teal-400 text-[11px] text-slate-950 font-bold shadow-[0_0_12px_#2dd4bf]'
+                    : 'w-3 h-3 bg-slate-900 border-2 border-teal-400/90 shadow-md'
                 }`}
               >
                 {isHub && '●'}
               </div>
+              <span className="text-[10px] text-slate-300 font-medium whitespace-nowrap absolute top-full left-1/2 -translate-x-1/2 mt-1 px-1.5 py-0.5 rounded bg-slate-950/80 border border-white/10 hidden sm:inline-block shadow-sm">
+                {d.name.split(' ')[0]}
+              </span>
             </div>
           );
         })}
@@ -471,27 +478,27 @@ export default function TourMapWidget() {
           className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-75 pointer-events-none"
         >
           <div className="relative flex items-center justify-center">
-            <span className="absolute -inset-2 rounded-full bg-teal-400/40 animate-ping" />
-            <div className="w-4 h-4 rounded-full bg-gradient-to-r from-amber-300 to-teal-400 border border-white shadow-[0_0_12px_#38bdf8] flex items-center justify-center text-[8px]">
+            <span className="absolute -inset-2.5 rounded-full bg-teal-400/40 animate-ping" />
+            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-amber-300 to-teal-400 border border-white shadow-[0_0_14px_#38bdf8] flex items-center justify-center text-[10px]">
               🚗
             </div>
           </div>
         </div>
 
         {/* Top Floating Badge */}
-        <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-950/80 border border-teal-500/40 text-[10px] font-semibold text-teal-300 backdrop-blur-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/85 border border-teal-500/40 text-xs font-semibold text-teal-300 backdrop-blur-md shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>3D Live Circuit</span>
         </div>
 
         {/* Bottom Expand Prompt Overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent flex items-center justify-between text-xs text-slate-300 group-hover:text-teal-300 transition-colors">
-          <span className="text-[11px] font-medium flex items-center gap-1">
-            <Compass size={13} className="text-teal-400 animate-spin-slow" />
-            Click to view map
+        <div className="absolute inset-x-0 bottom-0 p-3.5 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent flex items-center justify-between text-xs text-slate-300 group-hover:text-teal-300 transition-colors">
+          <span className="text-xs font-medium flex items-center gap-1.5">
+            <Compass size={15} className="text-teal-400 animate-spin-slow" />
+            Click to view full 3D radar
           </span>
-          <div className="p-1 rounded-md bg-teal-500/20 text-teal-300 group-hover:bg-teal-500 group-hover:text-slate-950 transition-all">
-            <Maximize2 size={13} />
+          <div className="p-1.5 rounded-lg bg-teal-500/20 text-teal-300 group-hover:bg-teal-500 group-hover:text-slate-950 transition-all">
+            <Maximize2 size={14} />
           </div>
         </div>
       </div>
