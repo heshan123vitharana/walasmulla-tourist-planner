@@ -3,7 +3,7 @@
  * Designed with modern dark aesthetics, bento storytelling, interactive destination showcase,
  * floating tablet mockups, collapsible FAQ accordion, and 3D radar map integration.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Compass, MapPin, Calendar, Clock, ChevronRight, ChevronDown,
@@ -132,6 +132,29 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 3D Scroll Reveal — IntersectionObserver for section transitions
+  const pageRef = useRef(null);
+  useEffect(() => {
+    const root = pageRef.current;
+    if (!root) return;
+    const targets = root.querySelectorAll('.reveal-3d');
+    if (!targets.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   // Auto-advance hero slideshow every 5.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
@@ -152,7 +175,7 @@ export default function HomePage() {
   const activeDestination = SHOWCASE_DESTINATIONS[activeDestIdx];
 
   return (
-    <div className="relative overflow-hidden bg-[#050608]">
+    <div ref={pageRef} className="relative overflow-hidden bg-[#050608] reveal-perspective">
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 1. HERO SECTION WITH 4K SLIDESHOW & FLOATING TABLET MOCKUP  */}
       {/* ─────────────────────────────────────────────────────────── */}
@@ -226,7 +249,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 2. HOW IT WORKS (BENTO STORYTELLING MATCHING REFERENCE UI)  */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-20">
+      <section className="page-container py-20 reveal-3d reveal-flip-up">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-950/80 border border-primary-800/40 text-primary-300 text-xs font-semibold uppercase tracking-wider">
             <span>Step By Step</span>
@@ -382,7 +405,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 3. ONE CIRCUIT FOR EVERY ADVENTURE (2x2 GLOWING BENTO GRID) */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-16">
+      <section className="page-container py-16 reveal-3d reveal-flip-left">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-teal-300 text-xs font-semibold uppercase tracking-wider">
             <span>Circuit Pillars</span>
@@ -477,7 +500,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 4. INSPIRE YOUR ADVENTURE (INTERACTIVE DESTINATION SHOWCASE) */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-16">
+      <section className="page-container py-16 reveal-3d reveal-zoom">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-teal-300 text-xs font-semibold uppercase tracking-wider">
             <span>Interactive Showcase</span>
@@ -606,7 +629,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 5. READY TO EXPLORE & 1:1 TOUR MAP RADAR SECTION             */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-16">
+      <section className="page-container py-16 reveal-3d reveal-flip-right">
         <div className="relative overflow-hidden rounded-3xl bg-[#07090e] border border-white/10 p-8 sm:p-10 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-8 lg:gap-12">
             {/* Left Column: Text & CTAs */}
@@ -664,7 +687,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 6. HAVE QUESTIONS? (COLLAPSIBLE FAQ ACCORDION)               */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-16">
+      <section className="page-container py-16 reveal-3d reveal-tilt">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-teal-300 text-xs font-semibold uppercase tracking-wider">
             <span>Support & Guidance</span>
@@ -711,7 +734,7 @@ export default function HomePage() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 7. CALL TO ACTION (MATCHING "HOW IT WORKS" BENTO AESTHETIC) */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="page-container py-16">
+      <section className="page-container py-16 reveal-3d reveal-rise">
         <div className="bento-card relative overflow-hidden rounded-3xl p-10 sm:p-16 text-center shadow-2xl border border-white/10 bg-[#07090e]">
           {/* Subtle Cyber Radar Grid Overlay */}
           <div
