@@ -7,6 +7,7 @@ import { PlanProvider }   from './context/PlanContext';
 import { ToastProvider }  from './context/ToastContext';
 import Navbar             from './components/Navbar';
 import Footer             from './components/Footer';
+import ScrollToTop        from './components/ScrollToTop';
 import PrivateRoute       from './components/PrivateRoute';
 import AdminRoute         from './components/AdminRoute';
 
@@ -59,9 +60,10 @@ export default function App() {
               } />
             </Routes>
           </main>
-          <Footer />
-        </div>
-      </BrowserRouter>
+            <Footer />
+            <ScrollToTop />
+          </div>
+        </BrowserRouter>
     </PlanProvider>
   </AuthProvider>
 </ToastProvider>

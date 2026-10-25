@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import {
   Compass, MapPin, Calendar, Clock, ChevronRight, ChevronDown,
   Navigation, Sparkles, Shield, Waves, Mountain, Feather, CheckCircle2,
-  ExternalLink, Layers, ArrowRight, Play, ArrowUp
+  ExternalLink, Layers, ArrowRight, Play
 } from 'lucide-react';
 import TourMapWidget from '../components/TourMapWidget';
 
@@ -123,17 +123,6 @@ export default function HomePage() {
   const [activeDestIdx, setActiveDestIdx] = useState(0);
   const [isDestPaused, setIsDestPaused] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // Show scroll-to-top button after scrolling past 300px
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // 3D Scroll Reveal — IntersectionObserver for section transitions
   const pageRef = useRef(null);
@@ -819,34 +808,6 @@ export default function HomePage() {
       </section>
 
       </div>
-
-      {/* ── Truly Fixed Floating Scroll-to-Top Button ── */}
-      <button
-        type="button"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        aria-label="Scroll to top"
-        data-tooltip="Scroll back to top"
-        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9999] group flex items-center justify-center
-          w-12 h-12 rounded-full
-          bg-gradient-to-br from-primary to-accent
-          shadow-xl shadow-primary/30
-          border border-white/20
-          backdrop-blur-md
-          transition-all duration-300 ease-out
-          hover:scale-110 hover:shadow-2xl hover:shadow-primary/50
-          active:scale-95
-          ${showScrollTop
-            ? 'opacity-100 translate-y-0 pointer-events-auto'
-            : 'opacity-0 translate-y-6 pointer-events-none'
-          }`}
-      >
-        <ArrowUp
-          size={22}
-          className="text-white transition-transform duration-300 group-hover:-translate-y-0.5"
-        />
-        {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-30 pointer-events-none" />
-      </button>
     </>
   );
 }

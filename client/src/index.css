@@ -303,7 +303,7 @@
 }
 
 /* ─── Global Pure CSS Tooltip Support ([data-tooltip]) ─────────── */
-[data-tooltip] {
+[data-tooltip]:not(.fixed):not(.absolute) {
   position: relative;
 }
 
@@ -367,6 +367,32 @@
   top: calc(100% + 2px);
   border-width: 0 5px 5px 5px;
   border-color: transparent transparent rgba(9, 13, 22, 0.96) transparent;
+}
+
+/* Tooltip Position: Left (for right-anchored floating elements) */
+[data-tooltip][data-tooltip-pos="left"]::after {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: calc(100% + 9px);
+  transform: translateY(-50%) scale(0.92);
+}
+[data-tooltip][data-tooltip-pos="left"]::before {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: calc(100% + 3px);
+  transform: translateY(-50%) scale(0.92);
+  border-width: 5px 0 5px 5px;
+  border-color: transparent transparent transparent rgba(9, 13, 22, 0.96);
+}
+[data-tooltip][data-tooltip-pos="left"]:not([data-tooltip=""]):hover::after,
+[data-tooltip][data-tooltip-pos="left"]:not([data-tooltip=""]):focus-visible::after {
+  transform: translateY(-50%) scale(1);
+}
+[data-tooltip][data-tooltip-pos="left"]:not([data-tooltip=""]):hover::before,
+[data-tooltip][data-tooltip-pos="left"]:not([data-tooltip=""]):focus-visible::before {
+  transform: translateY(-50%) scale(1);
 }
 
 
