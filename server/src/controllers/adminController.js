@@ -32,7 +32,7 @@ const placeBodySchema = z.object({
   openingHours:         z.object({ opensAt: z.string().nullable().optional(), closesAt: z.string().nullable().optional(), notes: z.string().optional() }).optional(),
   entryRequirements:    z.string().max(1000).optional(),
   travelTips:           z.array(z.string()).optional(),
-  imageUrl:             z.string().url().nullable().optional(),
+  imageUrl:             z.string().url().nullable().optional().or(z.literal('')).transform(v => v === '' ? null : v),
   isActive:             z.boolean().optional(),
   distanceKm:           z.number().min(0).max(100).optional(),
 });

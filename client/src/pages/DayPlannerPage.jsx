@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Calendar, Loader2, X, RefreshCw, Save, ArrowUp, ArrowDown, Clock,
+  Calendar, Loader2, X, RefreshCw, Save, ArrowUp, ArrowDown, Clock, Printer,
 } from 'lucide-react';
 import { usePlan } from '../context/PlanContext';
 import { useAuth } from '../context/AuthContext';
@@ -133,7 +133,7 @@ export default function DayPlannerPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 no-print">
             <button
               onClick={handleGenerate}
               disabled={placeIds.length === 0 || loading}
@@ -142,6 +142,16 @@ export default function DayPlannerPage() {
               {loading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
               Generate Itinerary
             </button>
+            {result && (
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="btn-secondary flex items-center gap-2"
+                title="Print itinerary or save to PDF"
+              >
+                <Printer size={16} /> Print / PDF
+              </button>
+            )}
             {result && user && (
               <button onClick={handleSave} disabled={saveLoading || saved} className="btn-secondary">
                 {saveLoading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
@@ -155,7 +165,7 @@ export default function DayPlannerPage() {
             )}
           </div>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="form-error no-print">{error}</p>}
         </div>
 
         {/* Right — itinerary + map */}
@@ -163,12 +173,24 @@ export default function DayPlannerPage() {
           {result && (
             <>
               {result.stops.length > 0 && (
-                <div className="card overflow-hidden">
+                <div className="card overflow-hidden no-print">
                   <PlaceMap stops={result.stops} height="260px" />
                 </div>
               )}
               <div className="card p-5">
-                <h2 className="section-title">Your Itinerary</h2>
+                <div className="print-only mb-4 pb-3 border-b border-slate-300">
+                  <h1 className="text-xl font-bold text-slate-900">Walasmulla Tourist Day Plan</h1>
+                  <p className="text-xs text-slate-600">Start Time: {startTime} · {result.stops.length} Stops · Southern Sri Lanka</p>
+                </div>
+                <div className="flex items-center justify-between mb-4 no-print">
+                  <h2 className="section-title mb-0">Your Itinerary</h2>
+                  <button
+                    onClick={() => window.print()}
+                    className="text-xs text-slate-400 hover:text-teal-300 flex items-center gap-1.5 transition-colors"
+                  >
+                    <Printer size={13} /> Print / Save PDF
+                  </button>
+                </div>
                 <ItineraryList stops={result.stops} warnings={result.warnings} />
               </div>
             </>

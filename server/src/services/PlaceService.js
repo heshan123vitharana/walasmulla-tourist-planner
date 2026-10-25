@@ -76,6 +76,13 @@ async function adminListPlaces() {
  * @returns {Promise<object>}
  */
 async function createPlace(data) {
+  if (data.location && data.location.coordinates && (data.distanceKm === undefined || data.distanceKm === null)) {
+    const { WALASMULLA_CENTRE, HAVERSINE_TO_ROAD_ESTIMATE } = require('../config/constants');
+    const { haversineKm } = require('../utils/haversine');
+    const pt = { lng: data.location.coordinates[0], lat: data.location.coordinates[1] };
+    const straightLine = haversineKm(WALASMULLA_CENTRE, pt);
+    data.distanceKm = Math.round(straightLine * HAVERSINE_TO_ROAD_ESTIMATE * 10) / 10;
+  }
   const place = new Place(data);
   await place.save();
   await place.populate('categories', 'name slug icon');
@@ -89,6 +96,10 @@ async function createPlace(data) {
  * @returns {Promise<object>}
  */
 async function updatePlace(id, updates) {
+  if (updates.name && (!updates.slug || updates.slug === '')) {
+    const { slugify } = require('../utils/slugify');
+    updates.slug = slugify(updates.name);
+  }
   const place = await Place.findByIdAndUpdate(id, updates, {
     new: true,
     runValidators: true,

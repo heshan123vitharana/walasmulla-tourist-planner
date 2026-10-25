@@ -9,6 +9,7 @@ import {
   adminCreateCategory, adminDeleteCategory,
   getCategories,
 } from '../../api/api';
+import PlaceModal from '../../components/admin/PlaceModal';
 
 const tabs = ['Places', 'Categories', 'Users'];
 
@@ -48,24 +49,46 @@ export default function AdminDashboardPage() {
 
 /* ─── Places Tab ──────────────────────────────────────────────── */
 function PlacesTab() {
-  const [places, setPlaces] = useState([]);
-  const [loading, setLoad]  = useState(true);
-  const [error, setError]   = useState(null);
+  const [places, setPlaces]       = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoad]        = useState(true);
+  const [error, setError]         = useState(null);
+
+  // Modal states
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   const load = useCallback(() => {
     setLoad(true);
-    adminGetPlaces()
-      .then(setPlaces)
+    Promise.all([adminGetPlaces(), getCategories()])
+      .then(([placesData, catsData]) => {
+        setPlaces(placesData);
+        setCategories(catsData);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoad(false));
   }, []);
 
   useEffect(load, [load]);
 
+  function handleOpenAdd() {
+    setSelectedPlace(null);
+    setModalOpen(true);
+  }
+
+  function handleOpenEdit(place) {
+    setSelectedPlace(place);
+    setModalOpen(true);
+  }
+
   async function handleDelete(id) {
-    if (!confirm('Delete this place?')) return;
-    try { await adminDeletePlace(id); load(); }
-    catch (e) { alert(e.message); }
+    if (!confirm('Are you sure you want to delete this place?')) return;
+    try {
+      await adminDeletePlace(id);
+      load();
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   if (loading) return <div className="flex justify-center py-16"><Loader2 size={28} className="text-primary-400 animate-spin" /></div>;
@@ -73,43 +96,98 @@ function PlacesTab() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-slate-400 text-sm">{places.length} places total</p>
-        <span className="text-slate-500 text-xs">Add places via seed script or API</span>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <div>
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            Tourist Destinations
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-card border border-surface-border text-slate-400 font-normal">
+              {places.length} places
+            </span>
+          </h2>
+          <p className="text-slate-400 text-xs">Manage places, GPS coordinates, durations, and entry requirements.</p>
+        </div>
+        <button
+          onClick={handleOpenAdd}
+          className="btn-primary text-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-glow shrink-0"
+        >
+          <Plus size={16} /> Add New Place
+        </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-2xl border border-surface-border bg-surface-card/40">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-slate-400 border-b border-surface-border">
-              <th className="py-2 pr-4 font-medium">Name</th>
-              <th className="py-2 pr-4 font-medium hidden sm:table-cell">Categories</th>
-              <th className="py-2 pr-4 font-medium hidden md:table-cell">Status</th>
-              <th className="py-2 font-medium">Actions</th>
+            <tr className="text-left text-slate-400 border-b border-surface-border bg-white/[0.02]">
+              <th className="py-3 px-4 font-medium">Name & Location</th>
+              <th className="py-3 px-4 font-medium hidden sm:table-cell">Categories</th>
+              <th className="py-3 px-4 font-medium hidden md:table-cell">Duration</th>
+              <th className="py-3 px-4 font-medium hidden md:table-cell">Status</th>
+              <th className="py-3 px-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-border">
             {places.map((p) => (
               <tr key={p._id} className="hover:bg-white/5 transition-colors">
-                <td className="py-3 pr-4 text-slate-200 font-medium">{p.name}</td>
-                <td className="py-3 pr-4 hidden sm:table-cell text-slate-400">
-                  {p.categories?.map((c) => c.name).join(', ')}
+                <td className="py-3.5 px-4">
+                  <div className="text-slate-200 font-semibold">{p.name}</div>
+                  <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                    {p.distanceKm !== undefined && <span>{p.distanceKm} km from Walasmulla</span>}
+                    {p.location?.coordinates && (
+                      <span className="font-mono text-[11px] text-slate-600">
+                        [{p.location.coordinates[1].toFixed(3)}, {p.location.coordinates[0].toFixed(3)}]
+                      </span>
+                    )}
+                  </div>
                 </td>
-                <td className="py-3 pr-4 hidden md:table-cell">
+                <td className="py-3.5 px-4 hidden sm:table-cell text-slate-300">
+                  <div className="flex flex-wrap gap-1">
+                    {p.categories?.map((c) => (
+                      <span key={c._id || c} className="badge bg-slate-800/80 text-teal-300 text-[11px]">
+                        {c.name || 'Category'}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 hidden md:table-cell text-slate-400">
+                  {p.visitDurationMinutes} min
+                </td>
+                <td className="py-3.5 px-4 hidden md:table-cell">
                   {p.isActive
                     ? <span className="badge bg-green-900/40 text-green-400 border border-green-700/40">Active</span>
                     : <span className="badge bg-red-900/40 text-red-400 border border-red-700/40">Inactive</span>}
                 </td>
-                <td className="py-3">
-                  <button onClick={() => handleDelete(p._id)} className="btn-ghost p-1.5 text-red-400 hover:text-red-300">
-                    <Trash2 size={15} />
-                  </button>
+                <td className="py-3.5 px-4 text-right">
+                  <div className="inline-flex items-center gap-1">
+                    <button
+                      onClick={() => handleOpenEdit(p)}
+                      className="btn-ghost p-1.5 text-slate-300 hover:text-teal-400 transition-colors"
+                      title="Edit place"
+                    >
+                      <Pencil size={15} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p._id)}
+                      className="btn-ghost p-1.5 text-red-400 hover:text-red-300 transition-colors"
+                      title="Delete place"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Add / Edit Place Modal */}
+      <PlaceModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSaved={load}
+        place={selectedPlace}
+        categories={categories}
+      />
     </div>
   );
 }
