@@ -153,11 +153,7 @@
 }
 
 /* ─── 3D Scroll Reveal Animations ────────────────────────────── */
-
-/* Perspective wrapper for child 3D transforms */
-.reveal-perspective {
-  /* Note: individual .reveal-3d variants define their own perspective() in transform to prevent breaking position:fixed children */
-}
+/* Note: individual .reveal-3d variants define their own perspective() in transform to prevent breaking position:fixed children */
 
 /* Base hidden state — shared by all reveal variants */
 .reveal-3d {
