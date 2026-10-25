@@ -10,6 +10,7 @@ import {
   getCategories,
 } from '../../api/api';
 import PlaceModal from '../../components/admin/PlaceModal';
+import { useToast } from '../../context/ToastContext';
 
 const tabs = ['Places', 'Categories', 'Users'];
 
@@ -53,6 +54,7 @@ function PlacesTab() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoad]        = useState(true);
   const [error, setError]         = useState(null);
+  const toast = useToast();
 
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
@@ -81,13 +83,14 @@ function PlacesTab() {
     setModalOpen(true);
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Are you sure you want to delete this place?')) return;
+  async function handleDelete(id, name) {
+    if (!confirm(`Are you sure you want to delete "${name || 'this destination'}"?`)) return;
     try {
       await adminDeletePlace(id);
       load();
+      toast.success(`"${name || 'Destination'}" was deleted successfully`, 'Deleted');
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message || 'Failed to delete place', 'Error');
     }
   }
 
@@ -108,6 +111,7 @@ function PlacesTab() {
         </div>
         <button
           onClick={handleOpenAdd}
+          data-tooltip="Open form to add a new tourist place"
           className="btn-primary text-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-glow shrink-0"
         >
           <Plus size={16} /> Add New Place
@@ -160,13 +164,15 @@ function PlacesTab() {
                   <div className="inline-flex items-center gap-1">
                     <button
                       onClick={() => handleOpenEdit(p)}
+                      data-tooltip="Edit destination details"
                       className="btn-ghost p-1.5 text-slate-300 hover:text-teal-400 transition-colors"
                       title="Edit place"
                     >
                       <Pencil size={15} />
                     </button>
                     <button
-                      onClick={() => handleDelete(p._id)}
+                      onClick={() => handleDelete(p._id, p.name)}
+                      data-tooltip="Delete destination permanently"
                       className="btn-ghost p-1.5 text-red-400 hover:text-red-300 transition-colors"
                       title="Delete place"
                     >
@@ -184,7 +190,10 @@ function PlacesTab() {
       <PlaceModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSaved={load}
+        onSaved={() => {
+          load();
+          toast.success(selectedPlace ? 'Destination updated successfully!' : 'New destination created!', 'Success');
+        }}
         place={selectedPlace}
         categories={categories}
       />
@@ -194,11 +203,12 @@ function PlacesTab() {
 
 /* ─── Categories Tab ──────────────────────────────────────────── */
 function CategoriesTab() {
-  const [cats, setCats]      = useState([]);
-  const [loading, setLoad]   = useState(true);
+  const [cats, setCats]       = useState([]);
+  const [loading, setLoad]    = useState(true);
   const [newName, setNewName] = useState('');
-  const [saving, setSaving]  = useState(false);
-  const [error, setError]    = useState(null);
+  const [saving, setSaving]   = useState(false);
+  const [error, setError]     = useState(null);
+  const toast = useToast();
 
   const load = useCallback(() => {
     setLoad(true);
@@ -216,19 +226,26 @@ function CategoriesTab() {
     setSaving(true);
     try {
       await adminCreateCategory({ name: newName.trim() });
+      toast.success(`Category "${newName.trim()}" created successfully!`, 'Category Created');
       setNewName('');
       load();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Failed to create category', 'Error');
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Delete this category?')) return;
-    try { await adminDeleteCategory(id); load(); }
-    catch (e) { alert(e.message); }
+  async function handleDelete(id, name) {
+    if (!confirm(`Delete category "${name || 'this category'}"?`)) return;
+    try {
+      await adminDeleteCategory(id);
+      load();
+      toast.success('Category removed successfully', 'Deleted');
+    } catch (e) {
+      toast.error(e.message || 'Failed to delete category', 'Error');
+    }
   }
 
   if (loading) return <div className="flex justify-center py-16"><Loader2 size={28} className="text-primary-400 animate-spin" /></div>;
@@ -245,10 +262,15 @@ function CategoriesTab() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="input"
-            placeholder="e.g. Wildlife"
+            placeholder="e.g. Wildlife, Waterfalls, Sacred Sites"
           />
         </div>
-        <button type="submit" disabled={saving} className="btn-primary shrink-0">
+        <button
+          type="submit"
+          disabled={saving}
+          data-tooltip="Create new destination category"
+          className="btn-primary shrink-0"
+        >
           {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />} Add
         </button>
       </form>
@@ -259,8 +281,12 @@ function CategoriesTab() {
         {cats.map((c) => (
           <li key={c._id} className="card p-4 flex items-center gap-3">
             <span className="flex-1 text-slate-200 font-medium">{c.name}</span>
-            <span className="text-slate-500 text-xs">{c.slug}</span>
-            <button onClick={() => handleDelete(c._id)} className="btn-ghost p-1.5 text-red-400 hover:text-red-300">
+            <span className="text-slate-500 text-xs font-mono">{c.slug}</span>
+            <button
+              onClick={() => handleDelete(c._id, c.name)}
+              data-tooltip="Delete category"
+              className="btn-ghost p-1.5 text-red-400 hover:text-red-300"
+            >
               <Trash2 size={15} />
             </button>
           </li>
@@ -275,6 +301,7 @@ function UsersTab() {
   const [users, setUsers]  = useState([]);
   const [loading, setLoad] = useState(true);
   const [error, setError]  = useState(null);
+  const toast = useToast();
 
   const load = useCallback(() => {
     setLoad(true);
@@ -288,14 +315,28 @@ function UsersTab() {
 
   async function toggleStatus(user) {
     const next = user.status === 'active' ? 'blocked' : 'active';
-    try { await adminSetUserStatus(user._id, next); load(); }
-    catch (e) { alert(e.message); }
+    try {
+      await adminSetUserStatus(user._id, next);
+      load();
+      if (next === 'blocked') {
+        toast.warning(`User ${user.username} has been blocked`, 'Access Blocked');
+      } else {
+        toast.success(`User ${user.username} is now active`, 'Access Restored');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Failed to update user status', 'Error');
+    }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Permanently delete this user?')) return;
-    try { await adminDeleteUser(id); load(); }
-    catch (e) { alert(e.message); }
+  async function handleDelete(id, username) {
+    if (!confirm(`Permanently delete account for "${username || 'this user'}"?`)) return;
+    try {
+      await adminDeleteUser(id);
+      load();
+      toast.success(`Account for "${username || 'user'}" deleted`, 'User Deleted');
+    } catch (e) {
+      toast.error(e.message || 'Failed to delete user', 'Error');
+    }
   }
 
   if (loading) return <div className="flex justify-center py-16"><Loader2 size={28} className="text-primary-400 animate-spin" /></div>;
@@ -336,6 +377,7 @@ function UsersTab() {
                   <button
                     onClick={() => toggleStatus(u)}
                     className="btn-ghost p-1.5"
+                    data-tooltip={u.status === 'active' ? 'Block user account' : 'Unblock user account'}
                     title={u.status === 'active' ? 'Block user' : 'Unblock user'}
                   >
                     {u.status === 'active'
@@ -344,7 +386,11 @@ function UsersTab() {
                   </button>
                 )}
                 {u.role !== 'admin' && (
-                  <button onClick={() => handleDelete(u._id)} className="btn-ghost p-1.5 text-red-400 hover:text-red-300">
+                  <button
+                    onClick={() => handleDelete(u._id, u.username)}
+                    data-tooltip="Delete user account"
+                    className="btn-ghost p-1.5 text-red-400 hover:text-red-300"
+                  >
                     <Trash2 size={15} />
                   </button>
                 )}

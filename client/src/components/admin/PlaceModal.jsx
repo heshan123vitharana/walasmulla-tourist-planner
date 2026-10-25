@@ -194,6 +194,7 @@ export default function PlaceModal({ isOpen, onClose, onSaved, place = null, cat
           <button
             type="button"
             onClick={onClose}
+            data-tooltip="Close modal"
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
           >
             <X size={18} />
@@ -230,6 +231,7 @@ export default function PlaceModal({ isOpen, onClose, onSaved, place = null, cat
               <button
                 type="button"
                 onClick={() => setIsActive(!isActive)}
+                data-tooltip={isActive ? 'Publicly visible in tourist directory' : 'Hidden from public directory'}
                 className={`w-full py-2.5 px-3 rounded-xl border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                   isActive
                     ? 'bg-green-950/40 border-green-700/50 text-green-300 hover:bg-green-950/60'
@@ -295,6 +297,7 @@ export default function PlaceModal({ isOpen, onClose, onSaved, place = null, cat
               <button
                 type="button"
                 onClick={handleSetWalasmullaCentre}
+                data-tooltip="Reset GPS coordinates to Walasmulla Town Clock Tower (6.1528°N, 80.6981°E)"
                 className="text-xs text-slate-400 hover:text-teal-300 underline transition-colors"
               >
                 Set to Walasmulla Center (6.1528, 80.6981)
@@ -426,6 +429,7 @@ export default function PlaceModal({ isOpen, onClose, onSaved, place = null, cat
               <button
                 type="button"
                 onClick={handleDressCodePreset}
+                data-tooltip="Insert standard Sri Lankan temple dress code requirements"
                 className="text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 transition-colors"
               >
                 <ShieldCheck size={12} /> Apply Temple Dress Code

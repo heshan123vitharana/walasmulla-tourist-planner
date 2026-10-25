@@ -220,11 +220,19 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3.5 justify-center items-center pt-2">
-            <Link to="/planner" className="btn-primary text-base px-7 py-3.5 shadow-glow rounded-xl font-semibold flex items-center gap-2">
+            <Link
+              to="/planner"
+              data-tooltip="Create a personalized single-day tour plan"
+              className="btn-primary text-base px-7 py-3.5 shadow-glow rounded-xl font-semibold flex items-center gap-2"
+            >
               <Calendar size={18} />
               <span>Start Day Planning</span>
             </Link>
-            <Link to="/places" className="btn-secondary text-base px-7 py-3.5 bg-white/5 hover:bg-white/10 border-white/15 rounded-xl font-semibold flex items-center gap-2">
+            <Link
+              to="/places"
+              data-tooltip="Browse verified destinations within 25 km"
+              className="btn-secondary text-base px-7 py-3.5 bg-white/5 hover:bg-white/10 border-white/15 rounded-xl font-semibold flex items-center gap-2"
+            >
               <Compass size={18} />
               <span>Explore 10 Spots</span>
             </Link>
@@ -817,6 +825,7 @@ export default function HomePage() {
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
+        data-tooltip="Scroll back to top"
         className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9999] group flex items-center justify-center
           w-12 h-12 rounded-full
           bg-gradient-to-br from-primary to-accent

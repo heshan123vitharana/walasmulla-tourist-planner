@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { getPlace } from '../api/api';
 import { usePlan } from '../context/PlanContext';
+import { useToast } from '../context/ToastContext';
 import PlaceMap from '../components/PlaceMap';
 
 export default function PlaceDetailPage() {
@@ -17,6 +18,18 @@ export default function PlaceDetailPage() {
   const [loading, setLoading]     = useState(true);
   const [error,   setError]       = useState(null);
   const { placeIds, addPlace, removePlace } = usePlan();
+  const toast = useToast();
+
+  function handleTogglePlan() {
+    if (!place) return;
+    if (inPlan) {
+      removePlace(place._id);
+      toast.info(`Removed "${place.name}" from your day plan`, 'Plan Updated');
+    } else {
+      addPlace(place);
+      toast.success(`Added "${place.name}" to your day plan`, 'Destination Added');
+    }
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -89,8 +102,9 @@ export default function PlaceDetailPage() {
         </div>
 
         <button
-          onClick={() => inPlan ? removePlace(place._id) : addPlace(place)}
+          onClick={handleTogglePlan}
           className={`shrink-0 ${inPlan ? 'btn-secondary' : 'btn-primary'}`}
+          data-tooltip={inPlan ? 'Click to remove from day itinerary' : 'Click to add to your day itinerary'}
         >
           {inPlan ? <><Check size={16} /> In Plan</> : <><Plus size={16} /> Add to Plan</>}
         </button>

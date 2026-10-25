@@ -4,6 +4,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider }   from './context/AuthContext';
 import { PlanProvider }   from './context/PlanContext';
+import { ToastProvider }  from './context/ToastContext';
 import Navbar             from './components/Navbar';
 import Footer             from './components/Footer';
 import PrivateRoute       from './components/PrivateRoute';
@@ -21,10 +22,11 @@ import AdminDashboardPage  from './pages/admin/AdminDashboardPage';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <PlanProvider>
-        <BrowserRouter>
-          <div className="min-h-screen flex flex-col">
+    <ToastProvider>
+      <AuthProvider>
+        <PlanProvider>
+          <BrowserRouter>
+            <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">
               <Routes>
@@ -62,5 +64,6 @@ export default function App() {
       </BrowserRouter>
     </PlanProvider>
   </AuthProvider>
+</ToastProvider>
   );
 }

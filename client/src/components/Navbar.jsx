@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePlan } from '../context/PlanContext';
+import { useToast } from '../context/ToastContext';
 import {
   Compass, MapPin, Calendar, LogIn, LogOut, User,
   LayoutDashboard, Menu, X, Sparkles, Shield, ChevronRight
@@ -14,10 +15,12 @@ export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const { placeIds } = usePlan();
   const navigate = useNavigate();
+  const toast = useToast();
   const [open, setOpen] = useState(false);
 
   function handleLogout() {
     logout();
+    toast.info('You have been signed out safely.', 'Signed Out');
     navigate('/');
   }
 

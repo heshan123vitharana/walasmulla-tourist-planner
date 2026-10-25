@@ -5,10 +5,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate     = useNavigate();
+  const toast        = useToast();
   const [form, setForm]   = useState({ username: '', password: '', confirm: '' });
   const [error, setError] = useState(null);
   const [load, setLoad]   = useState(false);
@@ -16,15 +18,18 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (form.password !== form.confirm) {
+      toast.warning('Passwords do not match', 'Validation');
       return setError('Passwords do not match');
     }
     setError(null);
     setLoad(true);
     try {
       await register(form.username, form.password);
+      toast.success(`Account created successfully! Welcome to Walasmulla Planner, ${form.username}!`, 'Account Ready');
       navigate('/my-plans');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Registration failed', 'Error');
     } finally {
       setLoad(false);
     }

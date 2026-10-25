@@ -49,6 +49,7 @@ export default function ItineraryList({ stops = [], warnings = [] }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="no-print inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-teal-300 bg-teal-950/40 hover:bg-teal-900/50 border border-teal-800/50 transition-colors"
+                data-tooltip="Open in Google Maps navigation"
                 title="Get directions in Google Maps"
               >
                 <MapPin size={12} />

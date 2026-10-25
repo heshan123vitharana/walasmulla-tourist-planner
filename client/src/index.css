@@ -296,3 +296,81 @@
   display: none;
 }
 
+/* ─── Toast Progress Animation ────────────────────────────────── */
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.animate-toast-progress {
+  animation: toastProgress linear forwards;
+}
+
+/* ─── Global Pure CSS Tooltip Support ([data-tooltip]) ─────────── */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.92);
+  border-width: 5px 5px 0 5px;
+  border-style: solid;
+  border-color: rgba(9, 13, 22, 0.96) transparent transparent transparent;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 61;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.92);
+  padding: 4px 9px;
+  border-radius: 8px;
+  background-color: rgba(9, 13, 22, 0.96);
+  color: #f1f5f9;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 60;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+[data-tooltip]:not([data-tooltip=""]):hover::before,
+[data-tooltip]:not([data-tooltip=""]):focus-visible::before {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+[data-tooltip]:not([data-tooltip=""]):hover::after,
+[data-tooltip]:not([data-tooltip=""]):focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Tooltip Position: Bottom */
+[data-tooltip][data-tooltip-pos="bottom"]::after {
+  bottom: auto;
+  top: calc(100% + 7px);
+}
+[data-tooltip][data-tooltip-pos="bottom"]::before {
+  bottom: auto;
+  top: calc(100% + 2px);
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent rgba(9, 13, 22, 0.96) transparent;
+}
+
+

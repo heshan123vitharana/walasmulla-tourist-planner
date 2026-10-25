@@ -4,15 +4,22 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Clock, Plus, Check } from 'lucide-react';
 import { usePlan } from '../context/PlanContext';
+import { useToast } from '../context/ToastContext';
 
 export default function PlaceCard({ place }) {
   const { placeIds, addPlace, removePlace } = usePlan();
+  const toast = useToast();
   const inPlan = placeIds.includes(place._id);
 
   function toggle(e) {
     e.preventDefault();
-    if (inPlan) removePlace(place._id);
-    else addPlace(place);
+    if (inPlan) {
+      removePlace(place._id);
+      toast.info(`Removed "${place.name}" from your day plan`, 'Plan Updated');
+    } else {
+      addPlace(place);
+      toast.success(`Added "${place.name}" to your day plan`, 'Destination Added');
+    }
   }
 
   return (
@@ -48,6 +55,7 @@ export default function PlaceCard({ place }) {
               ? 'bg-primary-500 text-white scale-110 shadow-glow'
               : 'bg-black/60 backdrop-blur-md text-white hover:bg-primary-600 border border-white/20'
           }`}
+          data-tooltip={inPlan ? 'Remove from day plan' : 'Add to day plan'}
           title={inPlan ? 'Remove from plan' : 'Add to plan'}
         >
           {inPlan ? <Check size={16} /> : <Plus size={16} />}

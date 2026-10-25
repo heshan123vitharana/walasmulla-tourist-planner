@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { usePlan } from '../context/PlanContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { generatePlan, savePlan } from '../api/api';
 import ItineraryList from '../components/ItineraryList';
 import PlaceMap from '../components/PlaceMap';
@@ -15,6 +16,7 @@ import PlaceMap from '../components/PlaceMap';
 export default function DayPlannerPage() {
   const { placeIds, places, startTime, orderMode, removePlace, movePlace, setStart, setMode, clearPlan } = usePlan();
   const { user } = useAuth();
+  const toast = useToast();
 
   const [result,    setResult]    = useState(null);
   const [loading,   setLoading]   = useState(false);
@@ -23,7 +25,10 @@ export default function DayPlannerPage() {
   const [saved,     setSaved]     = useState(false);
 
   async function handleGenerate() {
-    if (placeIds.length === 0) return;
+    if (placeIds.length === 0) {
+      toast.warning('Please add at least one destination to generate a plan.', 'No Places Selected');
+      return;
+    }
     setLoading(true);
     setError(null);
     setSaved(false);
@@ -34,8 +39,10 @@ export default function DayPlannerPage() {
     try {
       const res = await generatePlan(opts);
       setResult(res);
+      toast.success(`Itinerary with ${res.stops?.length || placeIds.length} stops generated successfully!`, 'Itinerary Ready');
     } catch (e) {
       setError(e.message);
+      toast.error(e.message || 'Failed to generate itinerary', 'Error');
     } finally {
       setLoading(false);
     }
@@ -47,11 +54,19 @@ export default function DayPlannerPage() {
     try {
       await savePlan({ placeIds, startTime, orderMode });
       setSaved(true);
+      toast.success('Your itinerary has been saved to "My Plans"!', 'Plan Saved');
     } catch (e) {
       setError(e.message);
+      toast.error(e.message || 'Failed to save plan', 'Save Error');
     } finally {
       setSave(false);
     }
+  }
+
+  function handleClearAll() {
+    clearPlan();
+    setResult(null);
+    toast.info('All stops have been cleared from your day plan.', 'Plan Cleared');
   }
 
   return (
@@ -97,7 +112,11 @@ export default function DayPlannerPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="section-title mb-0">Selected Places ({placeIds.length}/20)</h2>
               {placeIds.length > 0 && (
-                <button onClick={clearPlan} className="btn-ghost text-xs text-red-400 hover:text-red-300">
+                <button
+                  onClick={handleClearAll}
+                  data-tooltip="Remove all selected stops"
+                  className="btn-ghost text-xs text-red-400 hover:text-red-300"
+                >
                   Clear all
                 </button>
               )}
@@ -115,15 +134,29 @@ export default function DayPlannerPage() {
                     <span className="flex-1 text-sm text-slate-200 truncate">{p.name}</span>
                     {orderMode === 'manual' && (
                       <div className="flex gap-1">
-                        <button onClick={() => movePlace(i, i - 1)} disabled={i === 0} className="btn-ghost p-1 text-slate-500 disabled:opacity-20">
+                        <button
+                          onClick={() => movePlace(i, i - 1)}
+                          disabled={i === 0}
+                          data-tooltip="Move stop up"
+                          className="btn-ghost p-1 text-slate-500 disabled:opacity-20"
+                        >
                           <ArrowUp size={13} />
                         </button>
-                        <button onClick={() => movePlace(i, i + 1)} disabled={i === places.length - 1} className="btn-ghost p-1 text-slate-500 disabled:opacity-20">
+                        <button
+                          onClick={() => movePlace(i, i + 1)}
+                          disabled={i === places.length - 1}
+                          data-tooltip="Move stop down"
+                          className="btn-ghost p-1 text-slate-500 disabled:opacity-20"
+                        >
                           <ArrowDown size={13} />
                         </button>
                       </div>
                     )}
-                    <button onClick={() => removePlace(p._id)} className="btn-ghost p-1 text-slate-500 hover:text-red-400">
+                    <button
+                      onClick={() => removePlace(p._id)}
+                      data-tooltip="Remove from plan"
+                      className="btn-ghost p-1 text-slate-500 hover:text-red-400"
+                    >
                       <X size={14} />
                     </button>
                   </li>
@@ -137,6 +170,7 @@ export default function DayPlannerPage() {
             <button
               onClick={handleGenerate}
               disabled={placeIds.length === 0 || loading}
+              data-tooltip="Compute optimal route and timings"
               className="btn-primary flex-1"
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
@@ -147,13 +181,19 @@ export default function DayPlannerPage() {
                 type="button"
                 onClick={() => window.print()}
                 className="btn-secondary flex items-center gap-2"
+                data-tooltip="Print itinerary or save as PDF"
                 title="Print itinerary or save to PDF"
               >
                 <Printer size={16} /> Print / PDF
               </button>
             )}
             {result && user && (
-              <button onClick={handleSave} disabled={saveLoading || saved} className="btn-secondary">
+              <button
+                onClick={handleSave}
+                disabled={saveLoading || saved}
+                data-tooltip="Save plan to your account"
+                className="btn-secondary"
+              >
                 {saveLoading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                 {saved ? 'Saved!' : 'Save Plan'}
               </button>

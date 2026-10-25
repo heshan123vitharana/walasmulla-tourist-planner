@@ -5,10 +5,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function LoginPage() {
   const { login }  = useAuth();
   const navigate   = useNavigate();
+  const toast      = useToast();
   const [form, setForm]    = useState({ username: '', password: '' });
   const [error, setError]  = useState(null);
   const [loading, setLoad] = useState(false);
@@ -19,9 +21,11 @@ export default function LoginPage() {
     setLoad(true);
     try {
       const user = await login(form.username, form.password);
+      toast.success(`Welcome back, ${user.username}!`, 'Signed In');
       navigate(user.role === 'admin' ? '/admin' : '/my-plans');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Invalid username or password', 'Sign In Failed');
     } finally {
       setLoad(false);
     }

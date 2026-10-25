@@ -6,9 +6,11 @@ import { Link } from 'react-router-dom';
 import { Calendar, Loader2, Trash2, ChevronRight, PlusCircle } from 'lucide-react';
 import { getMyPlans, deletePlan } from '../api/api';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function MyPlansPage() {
   const { user }              = useAuth();
+  const toast                 = useToast();
   const [plans, setPlans]     = useState([]);
   const [loading, setLoad]    = useState(true);
   const [error, setError]     = useState(null);
@@ -20,13 +22,14 @@ export default function MyPlansPage() {
       .finally(() => setLoad(false));
   }, []);
 
-  async function handleDelete(id) {
-    if (!confirm('Delete this plan?')) return;
+  async function handleDelete(id, title) {
+    if (!confirm(`Delete plan "${title || 'this plan'}"?`)) return;
     try {
       await deletePlan(id);
       setPlans((prev) => prev.filter((p) => p._id !== id));
+      toast.success(`Plan "${title || 'Itinerary'}" was deleted`, 'Plan Removed');
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message || 'Failed to delete plan', 'Error');
     }
   }
 
@@ -64,10 +67,18 @@ export default function MyPlansPage() {
                   {plan.stops?.length ?? 0} stops · Start {plan.startTime} · {new Date(plan.createdAt).toLocaleDateString()}
                 </p>
               </div>
-              <Link to={`/plans/${plan._id}`} className="btn-secondary shrink-0 text-sm">
+              <Link
+                to={`/plans/${plan._id}`}
+                data-tooltip="View detailed itinerary & map"
+                className="btn-secondary shrink-0 text-sm"
+              >
                 View <ChevronRight size={14} />
               </Link>
-              <button onClick={() => handleDelete(plan._id)} className="btn-ghost p-2 text-red-400 hover:text-red-300">
+              <button
+                onClick={() => handleDelete(plan._id, plan.title)}
+                data-tooltip="Delete saved plan"
+                className="btn-ghost p-2 text-red-400 hover:text-red-300"
+              >
                 <Trash2 size={16} />
               </button>
             </li>

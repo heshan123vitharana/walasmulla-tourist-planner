@@ -211,6 +211,7 @@ export default function DirectoryPage() {
           {isFiltered && (
             <button
               onClick={handleResetFilters}
+              data-tooltip="Reset search queries and active filters"
               className="text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 transition-colors ml-auto"
             >
               <RotateCcw size={12} /> Reset all filters

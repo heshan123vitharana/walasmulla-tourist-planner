@@ -37,12 +37,17 @@ export default function SavedPlanDetailPage() {
   return (
     <div className="page-container max-w-3xl">
       <div className="flex items-center justify-between mb-6 no-print">
-        <Link to="/my-plans" className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 text-sm transition-colors">
+        <Link
+          to="/my-plans"
+          data-tooltip="Return to your saved plans list"
+          className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 text-sm transition-colors"
+        >
           <ChevronLeft size={16} /> My Plans
         </Link>
         <button
           onClick={() => window.print()}
           className="btn-secondary text-sm px-3.5 py-1.5 flex items-center gap-2"
+          data-tooltip="Print itinerary or save to PDF"
           title="Print itinerary or save as PDF"
         >
           <Printer size={15} /> Print / PDF
