@@ -30,11 +30,12 @@ export default function DirectoryPage() {
   const [maxDistance,   setMaxDistance]   = useState('all');
   const [maxDuration,   setMaxDuration]   = useState('all');
   const [sortBy,        setSortBy]        = useState('default');
+  const [retryTrigger,  setRetryTrigger]  = useState(0);
 
   /* Load categories once */
   useEffect(() => {
     getCategories().then(setCategories).catch(console.error);
-  }, []);
+  }, [retryTrigger]);
 
   /* Reload places from API when search query or categories change */
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function DirectoryPage() {
     }, 300); // debounce
 
     return () => clearTimeout(timer);
-  }, [query, activeCats]);
+  }, [query, activeCats, retryTrigger]);
 
   function toggleCat(slug) {
     setActiveCats((prev) =>
@@ -236,7 +237,16 @@ export default function DirectoryPage() {
           <Loader2 size={32} className="text-primary-400 animate-spin" />
         </div>
       ) : error ? (
-        <div className="text-red-400 text-center py-10">{error}</div>
+        <div className="card p-8 text-center max-w-md mx-auto my-8 border-red-900/40 bg-red-950/20">
+          <p className="text-sm text-red-300 mb-4">{error}</p>
+          <button
+            onClick={() => setRetryTrigger((c) => c + 1)}
+            data-tooltip="Retry connecting to server"
+            className="btn-primary text-xs px-4 py-2 inline-flex items-center gap-1.5 mx-auto"
+          >
+            <RotateCcw size={13} /> Try Again
+          </button>
+        </div>
       ) : filteredPlaces.length === 0 ? (
         <div className="text-slate-400 text-center py-16 card p-8">
           <p className="text-3xl mb-3">🔍</p>

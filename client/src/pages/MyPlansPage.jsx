@@ -1,9 +1,9 @@
 /**
  * MyPlansPage.jsx — Tourist saved plans list.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Loader2, Trash2, ChevronRight, PlusCircle } from 'lucide-react';
+import { Calendar, Loader2, Trash2, ChevronRight, PlusCircle, RotateCcw, AlertCircle } from 'lucide-react';
 import { getMyPlans, deletePlan } from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -13,14 +13,32 @@ export default function MyPlansPage() {
   const toast                 = useToast();
   const [plans, setPlans]     = useState([]);
   const [loading, setLoad]    = useState(true);
+  const [slowLoading, setSlow] = useState(false);
   const [error, setError]     = useState(null);
 
-  useEffect(() => {
+  const loadPlans = useCallback(() => {
+    setLoad(true);
+    setError(null);
     getMyPlans()
       .then(setPlans)
       .catch((e) => setError(e.message))
       .finally(() => setLoad(false));
   }, []);
+
+  useEffect(() => {
+    loadPlans();
+  }, [loadPlans]);
+
+  // Show helpful hint if cold-start takes more than 3 seconds
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => setSlow(true), 3500);
+    } else {
+      setSlow(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   async function handleDelete(id, title) {
     if (!confirm(`Delete plan "${title || 'this plan'}"?`)) return;
@@ -46,11 +64,28 @@ export default function MyPlansPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 size={32} className="text-primary-400 animate-spin" />
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Loader2 size={36} className="text-primary-400 animate-spin mb-3" />
+          <p className="text-slate-200 text-sm font-medium">Loading your saved plans...</p>
+          {slowLoading && (
+            <p className="text-slate-400 text-xs mt-2 max-w-xs animate-pulse leading-relaxed">
+              Cloud server is waking up from sleep mode (Render free tier). Please hold on...
+            </p>
+          )}
         </div>
       ) : error ? (
-        <p className="text-red-400 text-center py-10">{error}</p>
+        <div className="card p-8 text-center max-w-md mx-auto my-8 border-red-900/40 bg-red-950/20">
+          <AlertCircle size={36} className="mx-auto mb-3 text-red-400" />
+          <h3 className="text-base font-semibold text-slate-100 mb-1">Unable to Load Plans</h3>
+          <p className="text-xs text-red-300/90 mb-5 leading-relaxed">{error}</p>
+          <button
+            onClick={loadPlans}
+            data-tooltip="Retry connecting to the server"
+            className="btn-primary text-xs px-5 py-2.5 inline-flex items-center gap-2 mx-auto"
+          >
+            <RotateCcw size={14} /> Retry Now
+          </button>
+        </div>
       ) : plans.length === 0 ? (
         <div className="card p-12 text-center text-slate-500">
           <Calendar size={40} className="mx-auto mb-3 text-primary-800" />

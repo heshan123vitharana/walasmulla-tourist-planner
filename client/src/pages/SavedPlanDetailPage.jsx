@@ -13,21 +13,58 @@ export default function SavedPlanDetailPage() {
   const [plan,    setPlan]    = useState(null);
   const [loading, setLoad]    = useState(true);
   const [error,   setError]   = useState(null);
+  const [slowLoading, setSlow] = useState(false);
 
-  useEffect(() => {
+  const loadPlan = () => {
+    setLoad(true);
+    setError(null);
     getSavedPlan(id)
       .then(setPlan)
       .catch((e) => setError(e.message))
       .finally(() => setLoad(false));
+  };
+
+  useEffect(() => {
+    loadPlan();
   }, [id]);
 
-  if (loading) return <div className="flex justify-center py-32"><Loader2 size={32} className="text-primary-400 animate-spin" /></div>;
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => setSlow(true), 3500);
+    } else {
+      setSlow(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 text-center">
+        <Loader2 size={36} className="text-primary-400 animate-spin mb-3" />
+        <p className="text-slate-200 text-sm font-medium">Loading itinerary...</p>
+        {slowLoading && (
+          <p className="text-slate-400 text-xs mt-2 max-w-xs animate-pulse">
+            Cloud server is waking up from sleep mode (Render free tier). Please hold on...
+          </p>
+        )}
+      </div>
+    );
+  }
 
   if (error || !plan) return (
-    <div className="page-container text-center py-24 text-red-400">
-      {error || 'Plan not found.'}
-      <br />
-      <Link to="/my-plans" className="btn-secondary mt-4">Back to my plans</Link>
+    <div className="page-container text-center py-24">
+      <div className="card p-8 max-w-md mx-auto border-red-900/40 bg-red-950/20">
+        <p className="text-sm text-red-300 mb-5">{error || 'Plan not found.'}</p>
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={loadPlan} className="btn-primary text-xs px-4 py-2">
+            Try Again
+          </button>
+          <Link to="/my-plans" className="btn-secondary text-xs px-4 py-2">
+            Back to my plans
+          </Link>
+        </div>
+      </div>
     </div>
   );
 
